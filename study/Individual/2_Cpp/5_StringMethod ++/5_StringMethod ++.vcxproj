@@ -71,8 +71,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>../../../../output/</OutDir>
-    <IntDir>../../../../output/IS/cpp/5.5/</IntDir>
+    <OutDir>..\..\..\..\output\icpp\05a\z\</OutDir>
+    <IntDir>..\..\..\..\output\icpp\05a\a\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
