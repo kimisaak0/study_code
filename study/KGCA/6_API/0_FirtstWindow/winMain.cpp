@@ -15,7 +15,7 @@ LRESULT CALLBACK WndProc(HWND hWnd,      // 생성된 윈도우의 핸들값
 		case WM_DESTROY:
 		{
 			PostQuitMessage(0);// WM_QUIT--> PUSH			
-		}return 0;
+		}break;
 	}
 	//기본 메시지 처리 함수. 위에서 따로 처리하지 않은 모든 메시지를 처리해준다.
 	return DefWindowProc(hWnd, msg, wParam, lParam);

@@ -65,23 +65,33 @@ int WINAPI WinMain(
 	//윈도우 클래스 등록
 	RegisterClassEx(&WndClass);
 	
-	hwnd = 
-		CreateWindow(
-			L"MyWinodw",
-			L"Windows",
-			WS_OVERLAPPEDWINDOW,
-			CW_USEDEFAULT,
-			CW_USEDEFAULT,
-			CW_USEDEFAULT,
-			CW_USEDEFAULT,
-			NULL,
-			NULL,
-			hInst,
-			NULL
+	hwnd =	                               //CreateWindow()가 반환하는 윈도우 핸들값을 저장
+		CreateWindow(                      //등록한 클래스로 윈도우를 생성하는 함수
+			L"MyWinodw",                   //위에서 등록한 클래스 이름
+			L"Windows",                    //타이틀바에 적을 내용
+			WS_OVERLAPPEDWINDOW,           //윈도우 스타일
+			CW_USEDEFAULT,                 //윈도우가 표시될 x좌표
+			CW_USEDEFAULT,                 //윈도우가 표시될 y좌표
+			CW_USEDEFAULT,                 //윈도우 가로 크기 (넓이)
+			CW_USEDEFAULT,                 //윈도우 세로 크기 (높이)
+			NULL,                          //이 윈도우를 생성한 부모 윈도우의 핸들값
+			NULL,                          //메뉴 핸들
+			hInst,                         //이 윈도우를 생성한 프로그램의 핸들값
+			NULL                           //생성된 윈도우의 정보
 		);
 
-	ShowWindow(hwnd, nCmdShow);
-	UpdateWindow(hwnd);
+
+	ShowWindow(hwnd, SW_SHOW);      	//윈도우를 화면에 나타낼 방법을 지정.
+	UpdateWindow(hwnd);                 //윈도우에 WM_PAINT메시지를 보내 화면에 기본 출력을 한다.
+
+	//메시지 처리 과정
+	// 1) 이벤트 발생
+	// 2) 윈도우 커널이 이벤트 감지
+	// 3) 커널에서 프로그램으로 메시지 전달. (기본적으로 메시지 큐에 쌓임)
+	// 4) 메시지 큐에서 메시지 꺼냄
+	// 5) 꺼낸 메시지를 메시지 처리 함수로 보냄.
+	// 6) 지정된 반응 처리.
+
 
 	while (GetMessage(&msg, NULL, 0, 0)) {
 		TranslateMessage(&msg);
@@ -91,21 +101,26 @@ int WINAPI WinMain(
 	return msg.wParam;
 }
 
-LRESULT CALLBACK WndProc(
-	HWND hwnd, 
-	UINT iMsg, 
-	WPARAM wParam, 
-	LPARAM lParam
+//메시지 처리 함수 (함수명은 바뀔 수 있다.)
+LRESULT CALLBACK WndProc(   
+	HWND hwnd,      //이벤트를 처리할 윈도우의 핸들값
+	UINT iMsg,      //받은 메시지의 번호
+	WPARAM wParam,  //메시지에 대한 추가 정보 1
+	LPARAM lParam   //메시지에 대한 추가 정보 2
 )
 {
+	//특별히 처리할 메시지는 switch문에서 관리.
 	switch (iMsg) {
 		case WM_CREATE: 
 			break;
 
+		//윈도우를 닫을때 프로그램을 종료시키기 위해서는
 		case WM_DESTROY:
+			//아래의 함수를 호출해줘야 한다. 
 			PostQuitMessage(0);
 			break;
 	}
 
+	//나머지 메시지들은 디폴트 함수로 처리한다.
 	return DefWindowProc(hwnd, iMsg, wParam, lParam);
 }
