@@ -39,3 +39,8 @@ public:
 	}
 
 };
+
+struct dPointClass
+{
+	double x, y;
+};

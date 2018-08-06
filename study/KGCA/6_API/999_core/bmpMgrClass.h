@@ -34,3 +34,4 @@ public:
 	virtual ~bmpMgrClass();
 };
 
+#define I_bmpMgr bmpMgrClass::GetInstance()
