@@ -35,7 +35,7 @@ int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpCmdLine, int 
 	ShowWindow(hWnd, SW_SHOW);
 
 
-	HBITMAP hBmp = (HBITMAP)LoadImage(hInst, L"../../../../data/bitmap1.bmp", IMAGE_BITMAP, 0, 0, LR_DEFAULTSIZE | LR_LOADFROMFILE);
+	HBITMAP hBmp = (HBITMAP)LoadImage(hInst, L"../../../../data/topVeiw_Water_deepdark.bmp", IMAGE_BITMAP, 0, 0, LR_DEFAULTSIZE | LR_LOADFROMFILE);
 
 	HDC hdc = GetDC(hWnd);
 	HDC hMemDC = CreateCompatibleDC(hdc);

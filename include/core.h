@@ -1,6 +1,9 @@
 #pragma once
 #include "winClass.h"
 #include "timerClass.h"
+#include "bkObjClass.h"
+#include "npcClass.h"
+#include "collisionClass.h"
 
 class core : public winClass
 {

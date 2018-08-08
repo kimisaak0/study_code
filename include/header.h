@@ -7,6 +7,9 @@
 #include <string>
 #include <map>
 #include <list>
+#include <vector>
+
+
 
 typedef std::basic_string<char> C_STR;
 typedef std::basic_string<wchar_t> W_STR;
@@ -26,6 +29,7 @@ extern HWND g_hWnd; //현재 선택된 윈도우 핸들값
 extern HINSTANCE g_hInstance; //현재 프로그램 핸들값
 extern HDC g_hOffScreenDC;    //현재 선택한 DC핸들값
 extern double g_dSecPerFrame; //초당 프레임 수
+extern RECT g_rtClient;
 
 
 //싱글톤 클래스 템플릿 생성.
@@ -44,3 +48,4 @@ struct dPointClass
 {
 	double x, y;
 };
+

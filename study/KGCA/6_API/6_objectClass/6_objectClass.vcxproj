@@ -147,13 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="bkObjClass.cpp" />
-    <ClCompile Include="ObjClass.cpp" />
     <ClCompile Include="winMain.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="bkObjClass.h" />
-    <ClInclude Include="ObjClass.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

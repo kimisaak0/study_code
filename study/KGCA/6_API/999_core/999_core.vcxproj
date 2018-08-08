@@ -163,19 +163,27 @@ copy "*.lib" "../../../../lib"</Command>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="bkObjClass.cpp" />
     <ClCompile Include="bmpClass.cpp" />
     <ClCompile Include="bmpMgrClass.cpp" />
+    <ClCompile Include="collisionClass.cpp" />
     <ClCompile Include="core.cpp" />
     <ClCompile Include="inputClass.cpp" />
+    <ClCompile Include="npcClass.cpp" />
+    <ClCompile Include="ObjClass.cpp" />
     <ClCompile Include="timerClass.cpp" />
     <ClCompile Include="winClass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="bkObjClass.h" />
     <ClInclude Include="bmpClass.h" />
     <ClInclude Include="bmpMgrClass.h" />
+    <ClInclude Include="collisionClass.h" />
     <ClInclude Include="core.h" />
     <ClInclude Include="header.h" />
     <ClInclude Include="inputClass.h" />
+    <ClInclude Include="npcClass.h" />
+    <ClInclude Include="ObjClass.h" />
     <ClInclude Include="timerClass.h" />
     <ClInclude Include="winClass.h" />
   </ItemGroup>

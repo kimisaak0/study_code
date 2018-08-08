@@ -1,11 +1,11 @@
 #include "core.h"
-#include "bkObjClass.h"
+
 
 class sample : public core
 {
 	bkObjClass  m_BackGround;
 	objClass    m_Hero;
-	objClass    m_npc;
+	npcClass    m_npc;
 
 public:
 	bool Init() 
@@ -27,6 +27,7 @@ public:
 
 	bool Frame() {
 		m_BackGround.Frame();
+		m_npc.Frame();
 		m_Hero.Frame();
 		return true;
 	}

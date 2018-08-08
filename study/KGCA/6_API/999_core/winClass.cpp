@@ -1,9 +1,9 @@
 #include "winClass.h"
 
 winClass* g_pWindow = nullptr; //생성된 윈도우 인스턴스의 포인터를 저장하는 전역변수
-HWND g_hWnd = NULL;            //현재 윈도우의 핸들값을 갖고 있는 전역변수
+HWND      g_hWnd = NULL;            //현재 윈도우의 핸들값을 갖고 있는 전역변수
 HINSTANCE g_hInstance = NULL;
-
+RECT      g_rtClient;
 
 //메시지를 처리하는 함수 (OS에서 호출함)
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -59,6 +59,9 @@ bool winClass::SetWindow(
 		return false;
 	}
 
+	RECT rt = { 0,0,(LONG)iWidth, (LONG)iHeight };
+	AdjustWindowRect(&rt, m_dwStyle, FALSE);
+
 	// 윈도우 생성( 등록된 클래스를 사용해서 )
 	m_hWnd = CreateWindowEx(
 		WS_EX_APPWINDOW,
@@ -78,6 +81,7 @@ bool winClass::SetWindow(
 
 	GetWindowRect(m_hWnd, &m_rtWindow);	 //윈도우의 현재 위치와 크기를 구해서 두번째 인자로 전달된 RECT 구조체의 포인터에 넣어줌.
 	GetClientRect(m_hWnd, &m_rtClient);	 //윈도우의 작업영역 크기를 계산해서 두번째 인자로 전달된 RECT 구조체의 포인터에 넣어줌.
+	g_rtClient = m_rtClient;
 
 	//화면 중앙에 윈도우 띄우기
 	CenterWindow();
