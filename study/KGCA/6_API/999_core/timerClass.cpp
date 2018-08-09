@@ -85,7 +85,7 @@ bool    timerClass::Render()
 	//TextOut(hdc, 0, 0, m_csBuffer, (int)wcslen(m_csBuffer));	//버퍼의 문자열 뿌리기
 	//ReleaseDC(g_hWnd, hdc);  //HDC해제
 
-	SetBkColor(g_hOffScreenDC, RGB(255, 0, 0));
+	SetBkColor(g_hOffScreenDC, RGB(255, 255, 255));
 	SetTextColor(g_hOffScreenDC, RGB(0, 0, 255));
 	TextOut(g_hOffScreenDC, 0, 0, m_csBuffer, (int)wcslen(m_csBuffer));	//버퍼의 문자열 뿌리기
 

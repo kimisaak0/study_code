@@ -1,10 +1,11 @@
 #include "core.h"
 
+HDC g_hOffScreenDC = nullptr;
+HDC g_hScreenDC = nullptr;
+
 core::core()
 {
 }
-
-HDC g_hOffScreenDC = NULL;
 
 //초기화 (타이머랑 입력클래스 아직 core클래스의 함수는 하는 일이 없다.)
 bool    core::GameInit()
@@ -13,13 +14,17 @@ bool    core::GameInit()
 	I_Input.Init();
 
 	m_hScreenDC = GetDC(m_hWnd);
+	g_hScreenDC = m_hScreenDC;
+
+	m_hScreenDC = GetDC(m_hWnd);
 	m_hOffScreenDC = CreateCompatibleDC(m_hScreenDC);
+
 	g_hOffScreenDC = m_hOffScreenDC;
 
 	m_hOffScreenBmp = CreateCompatibleBitmap(m_hScreenDC, m_rtClient.right, m_rtClient.bottom);
 	SelectObject(m_hOffScreenDC, m_hOffScreenBmp);
 
-	COLORREF bkColor = RGB(255, 0, 0);
+	COLORREF bkColor = RGB(255, 255, 255);
 	m_hbrBack = CreateSolidBrush(bkColor);
 	SelectObject(m_hOffScreenDC, m_hbrBack);
 

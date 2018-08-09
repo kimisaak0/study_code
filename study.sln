@@ -161,6 +161,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1_CreatePattern", "1_Create
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "1_AbstractFactory", "study\KGCA\5_DesignPattern\1_AbstractFactory\1_AbstractFactory.vcxproj", "{E178E012-8948-4207-BDAB-93DFC4BC76AF}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "8_sceneClass", "study\KGCA\6_API\8_sceneClass\8_sceneClass.vcxproj", "{AC440A93-FAE4-46A0-95BC-5D6E8F4A5FC2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -661,6 +663,14 @@ Global
 		{E178E012-8948-4207-BDAB-93DFC4BC76AF}.Release|x64.Build.0 = Release|x64
 		{E178E012-8948-4207-BDAB-93DFC4BC76AF}.Release|x86.ActiveCfg = Release|Win32
 		{E178E012-8948-4207-BDAB-93DFC4BC76AF}.Release|x86.Build.0 = Release|Win32
+		{AC440A93-FAE4-46A0-95BC-5D6E8F4A5FC2}.Debug|x64.ActiveCfg = Debug|x64
+		{AC440A93-FAE4-46A0-95BC-5D6E8F4A5FC2}.Debug|x64.Build.0 = Debug|x64
+		{AC440A93-FAE4-46A0-95BC-5D6E8F4A5FC2}.Debug|x86.ActiveCfg = Debug|Win32
+		{AC440A93-FAE4-46A0-95BC-5D6E8F4A5FC2}.Debug|x86.Build.0 = Debug|Win32
+		{AC440A93-FAE4-46A0-95BC-5D6E8F4A5FC2}.Release|x64.ActiveCfg = Release|x64
+		{AC440A93-FAE4-46A0-95BC-5D6E8F4A5FC2}.Release|x64.Build.0 = Release|x64
+		{AC440A93-FAE4-46A0-95BC-5D6E8F4A5FC2}.Release|x86.ActiveCfg = Release|Win32
+		{AC440A93-FAE4-46A0-95BC-5D6E8F4A5FC2}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -743,6 +753,7 @@ Global
 		{F3ECAE13-067A-459B-8A4C-D6F5A3533BE9} = {3831835F-5290-40DD-8EE5-50C4E6C5A73A}
 		{CD781062-478A-4E80-BB75-41E9A3FB8BF3} = {DFBDBF00-D032-43CD-85E2-75245A709CC7}
 		{E178E012-8948-4207-BDAB-93DFC4BC76AF} = {CD781062-478A-4E80-BB75-41E9A3FB8BF3}
+		{AC440A93-FAE4-46A0-95BC-5D6E8F4A5FC2} = {5DE440A4-5CBC-4DF0-8C59-409AADF4071E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2E4B6B40-23D2-44B1-8503-70BBEDC4E4D5}

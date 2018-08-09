@@ -3,12 +3,13 @@
 #include <assert.h>
 #include <tchar.h>
 
+
 #include <iostream>
 #include <string>
 #include <map>
 #include <list>
 #include <vector>
-
+#include <memory>
 
 
 typedef std::basic_string<char> C_STR;
@@ -28,6 +29,7 @@ typedef std::basic_string<TCHAR> T_STR;
 extern HWND g_hWnd; //현재 선택된 윈도우 핸들값
 extern HINSTANCE g_hInstance; //현재 프로그램 핸들값
 extern HDC g_hOffScreenDC;    //현재 선택한 DC핸들값
+extern HDC g_hScreenDC;
 extern double g_dSecPerFrame; //초당 프레임 수
 extern RECT g_rtClient;
 
