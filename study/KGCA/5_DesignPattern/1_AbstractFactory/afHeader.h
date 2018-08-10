@@ -88,7 +88,7 @@ private:
 	
 public:
 	void AddRoom(Room* room) { m_RoomList.push_back(room); }  //방을 추가하는 메소드
-	Room* Roomnum(int num) const { return m_RoomList[num]; }  //방 번호로 방을 검색하는 메소드.
+	Room* serchRoomNum(int num) const { return m_RoomList[num]; }  //방 번호로 방을 검색하는 메소드.
 
 public:
 	Maze() {}

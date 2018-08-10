@@ -20,8 +20,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{E178E012-8948-4207-BDAB-93DFC4BC76AF}</ProjectGuid>
-    <RootNamespace>My1AbstractFactory</RootNamespace>
+    <ProjectGuid>{1A0726BA-1E52-4D76-925F-24F12E59494B}</ProjectGuid>
+    <RootNamespace>My2Builder</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -70,8 +70,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>..\..\..\..\output\dp\1\out\</OutDir>
-    <IntDir>..\..\..\..\output\dp\1\mid\</IntDir>
+    <OutDir>..\..\..\..\output\dp\2\out\</OutDir>
+    <IntDir>..\..\..\..\output\dp\2\mid\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -80,9 +80,6 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -121,8 +118,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="afMain.cpp" />
-    <ClCompile Include="afHeader.h" />
+    <ClInclude Include="BuilderHeader.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="BuilderMain.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
