@@ -37,7 +37,7 @@ public:
 
 	//윈도우를 화면 중앙에 뿌리기.
 	void		CenterWindow();
-
+	
 	//윈도우의 모든 처리를 하는 함수.
 	bool		Run();
 
