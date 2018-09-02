@@ -1,5 +1,8 @@
 #include <windows.h>
 
+HWND g_hWnd;
+HINSTANCE g_hInst;
+
 //¸Þ½ÃÁö¸¦ Ã³¸®ÇÏ´Â ÇÔ¼ö (OS¿¡¼­ È£ÃâÇÔ)
 LRESULT CALLBACK WndProc(HWND hWnd,      // »ý¼ºµÈ À©µµ¿ìÀÇ ÇÚµé°ª
 	                     UINT msg,       // ¸Þ½ÃÁö ¹øÈ£ °ª. ¸ÅÅ©·Î·Î Á¤ÀÇµÇ¾î ÀÖ´Ù.
@@ -30,6 +33,8 @@ int WINAPI WinMain(HINSTANCE  hInst,         // ÇÁ·Î±×·¥¿¡ OSÄ¿³ÎÀÌ ºÎ¿©ÇØÁÖ´Â Ç
 	               LPSTR      lpCmdLine,     // ¸í·ÉÇàÀ¸·Î ÀÔ·ÂµÈ ÇÁ·Î±×·¥ ÀÎ¼ö, ÇÁ·Î±×·¥ ½ÇÇà½Ã ¿ÜºÎ¿¡¼­ ³Ñ¾î¿À´Â ¹®ÀÚ¿­ÀÌ´Ù. ÄÜ¼Ö mainÀÇ argv°ª°ú ºñ½ÁÇÑ °Í.
 	               int        nCmdShow)      // À©µµ¿ì°¡ È­¸é¿¡ Ãâ·ÂµÉ ¶§ ÇüÅÂ¸¦ Á¤ÀÇÇÏ´Â ÀÎ¼ö. Ä¿³Î¿¡¼­ ³Ñ¾î¿Â´Ù.  
 {
+	g_hInst = hInst;
+
 	// À©µµ¿ì Å¬·¡½º µî·Ï
 	WNDCLASSEX wc;
 	ZeroMemory(&wc, sizeof(WNDCLASSEX));     //wc°´Ã¼¸¦ ÀüºÎ 0À¸·Î ÃÊ±âÈ­
@@ -58,6 +63,8 @@ int WINAPI WinMain(HINSTANCE  hInst,         // ÇÁ·Î±×·¥¿¡ OSÄ¿³ÎÀÌ ºÎ¿©ÇØÁÖ´Â Ç
 		                       hInst,                 // ÀÀ¿ë ÇÁ·Î±×·¥ ÀÎ½ºÅÏ½º. À©µµ¿ì¸¦ »ý¼ºÇÒ ÀÎ½ºÅÏ½º ÇÚµé ÁöÁ¤. ÀÎ½ºÅÏ½º°¡ Á¾·áµÉ ¶§ À©µµ¿ìµµ °°ÀÌ ÆÄ±«µÈ´Ù.
 		                       NULL                   // »ý¼º À©µµ¿ì Á¤º¸. WM_CREATE ¸Þ½ÃÁöÀÇ lParamÀ¸·Î Àü´ÞµÉ CREATESTRUCT ±¸Á¶Ã¼µéÀÇ Æ÷ÀÎÅÍ.
      );
+
+	g_hWnd = hWnd;
 
 	if (hWnd == NULL)
 	{
@@ -109,7 +116,22 @@ void GameInit()
 }
 void GameRun()
 {
-	// ÁöÇü, ¿ÀºêÁ§Æ®, ÀÌÆåÆ®, UI
+	//ÀÌ¹ÌÁö Ãâ·Â Å×½ºÆ® ¿ë (..)
+	HDC onHdc = GetDC(g_hWnd);
+	HDC offHdc = CreateCompatibleDC(onHdc);
+
+	HBITMAP nowBmp = (HBITMAP)LoadImage(g_hInst, L"topVeiw_Water_1.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+
+	if (nowBmp == NULL) {
+		MessageBox(g_hWnd, L"ÀÌ¹ÌÁö ·Îµå ½ÇÆÐ", L"ÀÌ¹ÌÁö ·Îµå ½ÇÆÐ", MB_OK);
+		return;
+	}
+
+	HBITMAP oldBmp = (HBITMAP)SelectObject(offHdc, nowBmp);
+
+	BitBlt(onHdc, 0, 0, 50, 50, offHdc, 0, 0, SRCCOPY);
+
+
 	//MessageBox(NULL, L"°ÔÀÓ ½ÇÇàÁß.", L"°ÔÀÓ½ÇÇà", MB_OK);
 }
 void GameRelease()
