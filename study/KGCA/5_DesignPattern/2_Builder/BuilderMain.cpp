@@ -272,4 +272,5 @@ int main()
 	counting.GetCounts(room, door);
 	maze = standard.GetMaze();
 
+	_getch();
 }
