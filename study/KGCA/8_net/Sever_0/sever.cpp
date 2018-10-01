@@ -27,7 +27,7 @@ int main()
 	ZeroMemory(&addr, sizeof(addr));
 	addr.sin_family = AF_INET;
 	//addr.sin_addr.s_addr = inet_addr("192.168.0.104");
-	addr.sin_addr.s_addr = inet_addr(INADDR_ANY);
+	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 	addr.sin_port = htons(10000);
 	//호스트 정렬(리틀엔디안)에서 네트워크 정렬(빅엔디안).
 
@@ -50,36 +50,30 @@ int main()
 	char buffer[256] = "안녕";
 	char buffer2[256] = { 0, };
 
+	clientSock = accept(sock, (sockaddr*)&clientInfo, &addrlen);
+	if (clientSock == INVALID_SOCKET) {
+		return 1;
+	}
+
+	//클라이언트에 대한 소켓이 반환됨 (마지막은 사이즈의 주소값을 원함 주의!)
+	printf("\n%s, %d", inet_ntoa(clientInfo.sin_addr), ntohs(clientInfo.sin_port));
+	send(clientSock, buffer, sizeof(buffer), 0);
+
 	while (true) {
-		//클라이언트에 대한 소켓이 반환됨 (마지막은 사이즈의 주소값을 원함 주의!)
-		clientSock = accept(sock, (sockaddr*)&clientInfo, &addrlen);
-		if (clientSock == INVALID_SOCKET) {
-			break;
-		}
+		ret = recv(clientSock, buffer2, sizeof(buffer2), 0);
 
-		printf("\n%s, %d", inet_ntoa(clientInfo.sin_addr), ntohs(clientInfo.sin_port));
+		strcat_s(buffer2, "\n");
+		send(clientSock, buffer2, sizeof(buffer2), 0);
 
-		send(clientSock, buffer, sizeof(buffer), 0);
-
-
-		while (true) {
-			ret = recv(clientSock, buffer2, sizeof(buffer2), 0);
-
-			clientList.push_back(clientSock);
-
-			for (int iUser = 0; iUser < clientList.size(); iUser++) {
-				send(clientList[iUser], buffer2, sizeof(buffer2), 0);
-			}
-		}
 
 		if (ret == 0) {
 			printf("\n 정상종료%s, %d 나갔습니다.", inet_ntoa(clientInfo.sin_addr), ntohs(clientInfo.sin_port));
-		}
-
+			break;
+		} 
 		if (ret < 0) {
 			printf("\n 비정상종료%s, %d 나갔습니다.", inet_ntoa(clientInfo.sin_addr), ntohs(clientInfo.sin_port));
+			break;
 		}
-
 	}
 
 	closesocket(sock);
@@ -89,3 +83,11 @@ int main()
 
 	std::cout << "HELLO";
 }
+
+
+
+//clientList.push_back(clientSock);
+
+//for (int iUser = 0; iUser < clientList.size(); iUser++) {
+//	send(clientList[iUser], buffer2, sizeof(buffer2), 0);
+//}
