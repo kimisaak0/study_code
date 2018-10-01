@@ -16,9 +16,7 @@ bool    core::GameInit()
 	m_hScreenDC = GetDC(m_hWnd);
 	g_hScreenDC = m_hScreenDC;
 
-	m_hScreenDC = GetDC(m_hWnd);
 	m_hOffScreenDC = CreateCompatibleDC(m_hScreenDC);
-
 	g_hOffScreenDC = m_hOffScreenDC;
 
 	m_hOffScreenBmp = CreateCompatibleBitmap(m_hScreenDC, m_rtClient.right, m_rtClient.bottom);
@@ -27,6 +25,9 @@ bool    core::GameInit()
 	COLORREF bkColor = RGB(255, 255, 255);
 	m_hbrBack = CreateSolidBrush(bkColor);
 	SelectObject(m_hOffScreenDC, m_hbrBack);
+
+	HANDLE m_hPen = CreatePen(PS_SOLID, 0, RGB(255,0,0));
+	SelectObject(m_hOffScreenDC, m_hPen);
 
 	Init();
 
