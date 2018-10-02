@@ -22,8 +22,8 @@ int main()
 	SOCKADDR_IN addr;
 	ZeroMemory(&addr, sizeof(addr));
 	addr.sin_family = AF_INET;
-	//addr.sin_addr.s_addr = inet_addr("192.168.0.101");  //127.은 루프백주소
-	addr.sin_addr.s_addr = inet_addr("127.0.0.1");  //127.은 루프백주소
+	addr.sin_addr.s_addr = inet_addr("192.168.0.101");  //127.은 루프백주소
+	//addr.sin_addr.s_addr = inet_addr("127.0.0.1");  //127.은 루프백주소
 	addr.sin_port = htons(10000);
 
 	//클라이언트에서 서버에 접속
@@ -38,12 +38,32 @@ int main()
 	char buffer2[256] = " 김이삭 ready";
 
 	//strcat_s(buffer, buffer2);
+
+	//send(sock, buffer2, sizeof(buffer2), 0);
+
+	//ret = recv(sock, buffer, sizeof(buffer), 0);
+	//std::cout << buffer;
+
+	//ret = recv(sock, buffer, sizeof(buffer), 0);
+	//if (ret == SOCKET_ERROR) {
+	//	std::cout << "서버가 종료되었습니다. \n";
+	//}
 	
+
 	while (true) {
-		recv(sock, buffer, sizeof(buffer), 0);
-		std::cout << buffer;
 		std::cin >> buffer2;
+		if (strcmp(buffer2, "close") == 0)
+		{
+			break;
+		}
 		send(sock, buffer2, sizeof(buffer2), 0);
+
+		ret = recv(sock, buffer, sizeof(buffer), 0);
+		std::cout << buffer;
+		
+		if (ret == SOCKET_ERROR) {
+			std::cout << "서버가 종료되었습니다. \n";
+		}
 	}
 
 	//윈속 종료
@@ -51,5 +71,4 @@ int main()
 
 	WSACleanup();
 
-	std::cout << "HELLO";
 }

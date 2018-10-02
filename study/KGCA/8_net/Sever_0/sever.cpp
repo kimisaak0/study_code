@@ -43,6 +43,9 @@ int main()
 		return 1;
 	}
 
+	u_long on = TRUE;
+	ioctlsocket(sock, FIONBIO, &on);
+
 	SOCKET clientSock;
 	SOCKADDR_IN clientInfo;
 	int addrlen = sizeof(clientInfo);
@@ -50,16 +53,18 @@ int main()
 	char buffer[256] = "안녕";
 	char buffer2[256] = { 0, };
 
-	clientSock = accept(sock, (sockaddr*)&clientInfo, &addrlen);
-	if (clientSock == INVALID_SOCKET) {
-		return 1;
-	}
-
-	//클라이언트에 대한 소켓이 반환됨 (마지막은 사이즈의 주소값을 원함 주의!)
-	printf("\n%s, %d", inet_ntoa(clientInfo.sin_addr), ntohs(clientInfo.sin_port));
-	send(clientSock, buffer, sizeof(buffer), 0);
-
 	while (true) {
+		clientSock = accept(sock, (sockaddr*)&clientInfo, &addrlen);
+		if (clientSock == INVALID_SOCKET) {
+			return 1;
+		}
+
+		//if(clientSock)
+
+		//클라이언트에 대한 소켓이 반환됨 (마지막은 사이즈의 주소값을 원함 주의!)
+		printf("\n%s, %d", inet_ntoa(clientInfo.sin_addr), ntohs(clientInfo.sin_port));
+		send(clientSock, buffer, sizeof(buffer), 0);
+
 		ret = recv(clientSock, buffer2, sizeof(buffer2), 0);
 
 		strcat_s(buffer2, "\n");
