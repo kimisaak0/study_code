@@ -71,7 +71,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>../../../../output/kgca/net/02/end/</OutDir>
-    <IntDir>../../../../output/kgca/net/02/end/</IntDir>
+    <IntDir>../../../../output/kgca/net/02/mid/</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>

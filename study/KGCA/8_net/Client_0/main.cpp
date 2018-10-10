@@ -1,8 +1,65 @@
-#define _WINSOCK_DEPRECATED_NO_WARNINGS
 
-#include <WinSock2.h>
-#include <iostream>
-#pragma comment (lib, "ws2_32")
+#include "header.h"
+
+int SendMsg(SOCKET sock, char* msg, WORD type) 
+{
+	//sock 보낼 소켓 
+	//msg 보낼 메시지
+	//type 보내는 메시지 타입
+
+	UPACKET sendmsg;
+	ZeroMemory(&sendmsg, sizeof(sendmsg));
+	sendmsg.ph.len = strlen(msg);
+	sendmsg.ph.type = type;
+	memcpy(sendmsg.msg, msg, strlen(msg));
+	//upacket구조체를 채움
+
+	int sendBytes = 0; // 보낸 바이트
+	int iTotalSize = strlen(msg) + PACKET_HEADER_SIZE; //보내야하는 총 바이트 (메시지 길이 + 헤더 사이즈)
+
+	char* pMsg = (char*)&sendmsg; //upacket구조체를 문자형포인터로 강제형변환해서 보냄.
+
+	do {
+		sendBytes += send(sock, &pMsg[sendBytes], iTotalSize - sendBytes, 0);
+	} while (sendBytes < iTotalSize);
+	//보낸 길이가 총 길이보다 작으면 계속 보냄.
+
+	return iTotalSize;
+}
+
+int RecvMsg(SOCKET sock)
+{
+	char buffer[256] = { 0, };
+	int recvbyte = 0;
+
+	while (true) {
+		recvbyte += recv(sock, &buffer[recvbyte], sizeof(char) * PACKET_HEADER_SIZE - recvbyte, 0);
+		if (recvbyte == 0) { return -1; } //받은 데이터가 0이면 종료.
+		if (recvbyte == PACKET_HEADER_SIZE) { //헤더만큼 받으면 헤더 해석
+			UPACKET packet;
+			ZeroMemory(&packet, sizeof(packet));
+			memcpy(&packet.ph, buffer, sizeof(char) * PACKET_HEADER_SIZE);
+			//버퍼의 내용을 패킷 구조체의 헤더 부분에 복사.
+			
+			int rByte = 0;
+			do {
+				int iRecvByte = recv(sock, (char*)&packet.msg[rByte], sizeof(char)*packet.ph.len - rByte, 0);
+				if (iRecvByte == 0) { break; }
+				rByte += iRecvByte;
+			} while (packet.ph.len > rByte);
+
+			recvbyte = 0;
+			switch (packet.ph.type) {
+				case PACKET_CAHT_MSG: {
+					printf("%s", packet.msg);
+				}
+			} break;
+
+		}
+	}
+
+	return recvbyte;
+}
 
 
 int main()
@@ -33,32 +90,17 @@ int main()
 	}
 
 	char buffer[256] = { 0, };
-
-
-	char buffer2[256] = " 김이삭 ready";
-
-	//strcat_s(buffer, buffer2);
-
-	//send(sock, buffer2, sizeof(buffer2), 0);
-
-	//ret = recv(sock, buffer, sizeof(buffer), 0);
-	//std::cout << buffer;
-
-	//ret = recv(sock, buffer, sizeof(buffer), 0);
-	//if (ret == SOCKET_ERROR) {
-	//	std::cout << "서버가 종료되었습니다. \n";
-	//}
-	
+	char buffer2[256] = { 0, };
 
 	while (true) {
-		std::cin >> buffer2;
+		std::cin.getline(buffer2, 256);
 		if (strcmp(buffer2, "close") == 0)
 		{
 			break;
 		}
-		send(sock, buffer2, sizeof(buffer2), 0);
+		SendMsg(sock, buffer2, PACKET_CAHT_MSG);
 
-		ret = recv(sock, buffer, sizeof(buffer), 0);
+		ret = RecvMsg(sock);
 		std::cout << buffer;
 		
 		if (ret == SOCKET_ERROR) {

@@ -6,7 +6,7 @@
 
 int main()
 {
-	char* ip;
+	char* ip = nullptr;
 
 	std::cout << "접속할 IP를 입력하세요. \n";
 	std::cin >> ip;	

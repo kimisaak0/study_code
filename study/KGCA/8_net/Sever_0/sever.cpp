@@ -55,9 +55,9 @@ int main()
 
 	while (true) {
 		clientSock = accept(sock, (sockaddr*)&clientInfo, &addrlen);
-		if (clientSock == INVALID_SOCKET) {
-			return 1;
-		}
+		//if (clientSock == INVALID_SOCKET) {
+		//	return 1;
+		//}
 
 		//if(clientSock)
 
@@ -71,14 +71,14 @@ int main()
 		send(clientSock, buffer2, sizeof(buffer2), 0);
 
 
-		if (ret == 0) {
+		if (ret == 0 || ret == SOCKET_ERROR) {
 			printf("\n 정상종료%s, %d 나갔습니다.", inet_ntoa(clientInfo.sin_addr), ntohs(clientInfo.sin_port));
 			break;
-		} 
+		} /*
 		if (ret < 0) {
 			printf("\n 비정상종료%s, %d 나갔습니다.", inet_ntoa(clientInfo.sin_addr), ntohs(clientInfo.sin_port));
 			break;
-		}
+		}*/
 	}
 
 	closesocket(sock);
@@ -88,11 +88,3 @@ int main()
 
 	std::cout << "HELLO";
 }
-
-
-
-//clientList.push_back(clientSock);
-
-//for (int iUser = 0; iUser < clientList.size(); iUser++) {
-//	send(clientList[iUser], buffer2, sizeof(buffer2), 0);
-//}
