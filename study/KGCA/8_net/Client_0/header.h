@@ -4,6 +4,9 @@
 
 #include <WinSock2.h>
 #include <iostream>
+
+#include <conio.h>
+
 #pragma comment (lib, "ws2_32")
 
 #include <Windows.h>

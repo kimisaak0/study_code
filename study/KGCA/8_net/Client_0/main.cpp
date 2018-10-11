@@ -32,7 +32,7 @@ int RecvMsg(SOCKET sock)
 	char buffer[256] = { 0, };
 	int recvbyte = 0;
 
-	while (true) {
+
 		recvbyte += recv(sock, &buffer[recvbyte], sizeof(char) * PACKET_HEADER_SIZE - recvbyte, 0);
 		if (recvbyte == 0) { return -1; } //받은 데이터가 0이면 종료.
 		if (recvbyte == PACKET_HEADER_SIZE) { //헤더만큼 받으면 헤더 해석
@@ -53,10 +53,10 @@ int RecvMsg(SOCKET sock)
 				case PACKET_CAHT_MSG: {
 					printf("%s", packet.msg);
 				}
-			} break;
+			} 
 
 		}
-	}
+
 
 	return recvbyte;
 }
@@ -76,6 +76,12 @@ int main()
 		return 1; 
 	}
 
+	u_long iSockMode = TRUE; //1 Nunblocking, 0 blocking.
+
+	if (ioctlsocket(sock, FIONBIO, &iSockMode) != NO_ERROR) {
+		return 1;
+	}
+
 	SOCKADDR_IN addr;
 	ZeroMemory(&addr, sizeof(addr));
 	addr.sin_family = AF_INET;
@@ -86,25 +92,52 @@ int main()
 	//클라이언트에서 서버에 접속
 	int ret = connect(sock, (sockaddr*)&addr, sizeof(addr));
 	if (ret == SOCKET_ERROR) {
-		return 1;
+		if (WSAGetLastError() != WSAEWOULDBLOCK) {
+			return 1;
+		}
 	}
 
 	char buffer[256] = { 0, };
 	char buffer2[256] = { 0, };
+	int iEnd = 0;
+	int iValue = 0;
 
 	while (true) {
-		std::cin.getline(buffer2, 256);
-		if (strcmp(buffer2, "close") == 0)
-		{
-			break;
-		}
-		SendMsg(sock, buffer2, PACKET_CAHT_MSG);
+		if (_kbhit() == true) {
+			//std::cin.getline(buffer2, 256);
 
-		ret = RecvMsg(sock);
-		std::cout << buffer;
-		
-		if (ret == SOCKET_ERROR) {
-			std::cout << "서버가 종료되었습니다. \n";
+			iValue = _getch();
+			if (strlen(buffer2) == 0 && iValue == '\r') { break; }
+
+			if (iValue == '\r') {
+				if (strcmp(buffer2, "close") == 0) {
+					break;
+				}
+				int iRet = SendMsg(sock, buffer2, PACKET_CAHT_MSG);
+
+				if (iRet == SOCKET_ERROR) {
+					if (WSAGetLastError() != WSAEWOULDBLOCK) {
+						closesocket(sock);
+						break;
+					}
+				}
+			}
+			else {
+				if (iEnd < 255) {
+					buffer2[iEnd++] = iValue;
+				}
+			}	
+		}
+		else {
+			ret = RecvMsg(sock);
+			if (ret == SOCKET_ERROR) {
+				if (WSAGetLastError() != WSAEWOULDBLOCK) {
+					std::cout << "서버가 종료되었습니다. \n";
+					closesocket(sock);
+					break;
+				}
+				continue;
+			}
 		}
 	}
 
