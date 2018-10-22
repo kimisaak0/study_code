@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Rectangle">
+    <Position X="8.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAAAAgAAAAAAAAAAAAQgAAAAAAAAAAAAgAI=</HashCode>
+      <FileName>AdapterMain.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TextView">
+    <Position X="0.75" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAAAAAABAAAAAAAAAQgAAACAAAAAAAAAAAI=</HashCode>
+      <FileName>AdapterMain.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Shape">
+    <Position X="5.5" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAAAAMAAAAAAAACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AdapterMain.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TextShape">
+    <Position X="3.5" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AdapterMain.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="맑은 고딕" Size="9" />
+</ClassDiagram>

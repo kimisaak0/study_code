@@ -3,10 +3,11 @@
 //Adapter pattern에는 Class Adapter와 Object Adapter의 두가지가 있다.
 
 #include <iostream>
+#include <conio.h>
 using namespace std;
 
 //#define CLASS_ADT
-//#define OBJECT_ADT
+#define OBJECT_ADT
 
 //기본 사각형
 class Rectangle
@@ -172,6 +173,7 @@ int main()
 #if defined CLASS_ADT || defined OBJECT_ADT
 	TextShape text(5,5,5,5);
 	DisplayBoundingBox(&text);
+	_getch();
 #else
 	TextView text;
 	DisplayBoundingBox(NULL, &text);

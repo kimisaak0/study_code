@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <vector>
+#include <conio.h>
 using std::vector;
 
 enum Direction { north, east, south, west };
