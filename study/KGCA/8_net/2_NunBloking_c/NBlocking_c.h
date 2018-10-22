@@ -11,12 +11,15 @@
 
 #define MAX_BUFFER_SIZE 256
 
+
+//오류 내용이 제대로 나오지 않음. 
 //오류 처리를 위한 함수
 static void ERR_EXIT(const TCHAR* msg)
 {
 	LPVOID lpMsgBuf;
 	FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
-		NULL, WSAGetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		NULL, WSAGetLastError(), 
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 		(TCHAR*)&lpMsgBuf, 0, NULL);
 	MessageBox(NULL, (TCHAR*)&lpMsgBuf, msg, MB_ICONERROR);
 	LocalFree(lpMsgBuf);
@@ -26,9 +29,10 @@ static void ERR_print(const TCHAR* msg)
 {
 	LPVOID lpMsgBuf;
 	FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
-		NULL, WSAGetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		NULL, WSAGetLastError(),
+		GetLocaleInfoEx(LOCALE_NAME_SYSTEM_DEFAULT, LOCALE_RETURN_NUMBER, 0, 0),
 		(TCHAR*)&lpMsgBuf, 0, NULL);
-	printf("[%s] %s", msg, (char*)lpMsgBuf);
+	printf("[%s] %s", (char*)msg, (char*)lpMsgBuf);
 	LocalFree(lpMsgBuf);
 }
 
@@ -37,7 +41,7 @@ static int NonBlockingSocket(SOCKET sock, u_long uMode)
 	//To make NonBlocking Socket, controls the I/O mode of a socket
 	int iRet = ioctlsocket(sock, FIONBIO, &uMode);
 	if (iRet != NO_ERROR) {
-		T_ERR_EXIT(_T("ioctlsocket"));
+		ERR_EXIT(_T("ioctlsocket"));
 	}
 	return iRet;
 }

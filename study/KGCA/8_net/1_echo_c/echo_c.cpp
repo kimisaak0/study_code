@@ -10,12 +10,12 @@ int main()
 	WSADATA WSD;
 	int ret = 0;
 
-	//
+	//윈속 초기화
 	ret = WSAStartup(MAKEWORD(2, 2), &WSD);
 	if (ret != 0) { return -1; }
 
 	//
-	SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
+	SOCKET sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (sock == INVALID_SOCKET) { return -1; }
 
 	std::string ip;

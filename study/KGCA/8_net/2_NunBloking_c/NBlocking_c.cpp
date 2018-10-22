@@ -8,12 +8,18 @@ int main()
 
 	WSADATA wsd;
 	iRet = WSAStartup(MAKEWORD(2, 2), &wsd);
-	if ( iRet != (int)NO_ERROR) { return -1; }
+	if ( iRet != (int)NO_ERROR) { 
+		ERR_EXIT(_T("윈속 초기화 실패"));
+		return -1; 
+	}
 
 	SOCKET sock;
 	sock = socket(AF_INET, SOCK_STREAM, 0);
 	iRet = NonBlockingSocket(sock, TRUE);
-	if (iRet == SOCKET_ERROR) {	return -1; }
+	if (iRet != SOCKET_ERROR) {	
+		ERR_EXIT(_T("소켓 생성 실패"));
+		return -1; 
+	}
 
 	std::string ip;
 	std::cout << "접속할 IP를 입력하세요. \n";
