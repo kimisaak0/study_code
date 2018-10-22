@@ -20,9 +20,10 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{9E99377A-3DAB-42F5-A0E7-34E11F945B12}</ProjectGuid>
-    <RootNamespace>Client0</RootNamespace>
+    <ProjectGuid>{5199DBE0-1902-43BD-AFAA-FCFEB5762929}</ProjectGuid>
+    <RootNamespace>My2NunBlokingc</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <ProjectName>2_NonBlocking_c</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -70,8 +71,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>../../../../../z_End/Net/0C/</OutDir>
-    <IntDir>../../../../../z_Mid/Net/0C/</IntDir>
+    <OutDir>../../../../../z_End/Net/2c/</OutDir>
+    <IntDir>../../../../../z_Mid/Net/2c/</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -118,12 +119,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="header.h" />
-    <ClInclude Include="packet.h" />
+    <ClCompile Include="NBlocking_c.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Packet.cpp" />
+    <ClInclude Include="NBlocking_c.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -20,8 +20,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{9E99377A-3DAB-42F5-A0E7-34E11F945B12}</ProjectGuid>
-    <RootNamespace>Client0</RootNamespace>
+    <ProjectGuid>{A739B628-F8D3-4725-A558-3535039D638A}</ProjectGuid>
+    <RootNamespace>My1echos</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -70,8 +70,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>../../../../../z_End/Net/0C/</OutDir>
-    <IntDir>../../../../../z_Mid/Net/0C/</IntDir>
+    <OutDir>../../../../../z_End/Net/1s/</OutDir>
+    <IntDir>../../../../../z_Mid/Net/1s/</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -118,12 +118,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="header.h" />
-    <ClInclude Include="packet.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Packet.cpp" />
+    <ClCompile Include="echo_s.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
