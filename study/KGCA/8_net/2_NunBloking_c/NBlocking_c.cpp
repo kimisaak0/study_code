@@ -15,79 +15,79 @@ int main()
 
 	SOCKET sock;
 	sock = socket(AF_INET, SOCK_STREAM,0);
-	iRet = NonBlockingSocket(sock, TRUE);
-	if (iRet == SOCKET_ERROR) {	
+	if (sock == INVALID_SOCKET) {
 		ERR_EXIT(_T("소켓 생성 실패"));
-		return -1; 
+		return -1;
 	}
 
-	std::string ip;
-	std::cout << "접속할 IP를 입력하세요. \n";
-	std::cin >> ip;
-
-	SOCKADDR_IN sa_in;
-	ZeroMemory(&sa_in, sizeof(sa_in));
-	sa_in.sin_family = AF_INET;
-	sa_in.sin_addr.s_addr = inet_addr(ip.c_str()); //문자열을 숫자로 변환
-	sa_in.sin_port = htons(10000); //리틀엔디안에서 빅엔디안으로 변환
-
-	// 2)
-	iRet = connect(sock, (SOCKADDR*)&sa_in, sizeof(sa_in));
-	if (iRet == SOCKET_ERROR) {
-		if (WSAGetLastError() != WSAEWOULDBLOCK) {
-			ERR_EXIT(_T("connect"));
-			return -1;
+	// 서버 접속 처리
+	do {
+		if (iRet == SOCKET_ERROR) {
+			std::cout << "IP를 잘못 입력하셨거나, 서버가 닫혀있습니다.\n";
 		}
 
-		//접속 시간 제한은 WSAEWOULDBLOCK일때만 세팅한다.
-		if (tConnect(sock, 3000) == false) { return -1;	}
-	}
+		std::string ip;
+		std::cout << "접속할 IP를 입력하세요. \n";
+		std::cin >> ip;
 
+		SOCKADDR_IN sa_in;
+		ZeroMemory(&sa_in, sizeof(sa_in));
+		sa_in.sin_family = AF_INET;
+		sa_in.sin_addr.s_addr = inet_addr(ip.c_str());     //문자열을 숫자로 변환
+		sa_in.sin_port = htons(10000);                     //리틀엔디안에서 빅엔디안으로 변환
+
+		iRet = connect(sock, (sockaddr*)&sa_in, sizeof(sa_in));    //입력한 IP로 접속시도.
+	} while (iRet == SOCKET_ERROR);
+
+	std::cout << "서버 접속 성공 \n";
+
+	//논블록킹 소켓으로 전환
 	iRet = NonBlockingSocket(sock, TRUE);
-	if (iRet == SOCKET_ERROR) {	return -1; }
+	if (iRet == SOCKET_ERROR) { return -1; }
 
 	char buf[MAX_BUFFER_SIZE] = { 0, };
 	int iEnd = 0;
 
+	//메시지 처리
 	while (true) {
 		if ((bool)_kbhit() == true) {
-			int iValue = _getch();
-			if ((int)strlen(buf) == 0 && iValue == '\r') { break; }
-			if (iValue == '\r') {
-				if ((int)strlen(buf) == 1) { break; } 
-				// 3)
-				iRet = send(sock, buf, (int)strlen(buf), 0);
-				if (iRet == SOCKET_ERROR) {
-					if (WSAGetLastError() != WSAEWOULDBLOCK) {
-						ERR_EXIT(_T("send"));
-						closesocket(sock);
-						break;
-					}
-				}
-				ZeroMemory(buf, sizeof(char)*MAX_BUFFER_SIZE);
-				iEnd = 0;
-			}
-			else {
-				if (iEnd < MAX_BUFFER_SIZE - 1) {
-					buf[iEnd++] = iValue;
-				}
-			}
+			iRet = NonBlockingSocket(sock, FALSE);
+			if (iRet == SOCKET_ERROR) { return -1; }
+
+			getc(stdin); //버퍼 비우기
+			getc(stdin); //버퍼 비우기
+
+			char sendBuf[256] = { 0, };
+			ZeroMemory(sendBuf, sizeof(sendBuf));
+			std::cout << "입력 : "; fgets(sendBuf, 256, stdin);
+			if (sendBuf[0] == '\n') { break; } //엔터만 치면 종료시키기.
+
+			size_t iLen = 0;
+			iLen = strlen(sendBuf) - 1;
+
+			int iSendByte = 0;
+			iSendByte = send(sock, sendBuf, (int)iLen, 0);  //데이터 전송 함수
+			std::cout << iSendByte << "byte 전송. \n";
+
+			iRet = NonBlockingSocket(sock, TRUE);
+			if (iRet == SOCKET_ERROR) { return -1; }
 		}
 		else {
-			char bufRecv[MAX_BUFFER_SIZE] = { 0, };
+			char RecvBuf[MAX_BUFFER_SIZE] = { 0, };
 			// 7)
-			int iRecvByte = recv(sock, bufRecv, MAX_BUFFER_SIZE - 1, 0);
-			if (iRecvByte == (int)NO_ERROR) { break; }
+			int iRecvByte = recv(sock, RecvBuf, MAX_BUFFER_SIZE - 1, 0);
 			if (iRecvByte == SOCKET_ERROR) {
 				if (WSAGetLastError() != WSAEWOULDBLOCK) {
 					closesocket(sock);
-					ERR_EXIT(_T("recv"));
-					break;
+					ERR_EXIT(_T("메시지 수신 실패"));
 				}
-				continue;
+				else {
+					continue;
+				}
 			}
-			bufRecv[iRecvByte] = 0;
-			printf("recv=%s\n", bufRecv);
+			//RecvBuf[iRecvByte] = 0;
+			printf("받은 데이터 = %s\n", RecvBuf);
+			ZeroMemory(RecvBuf, sizeof(RecvBuf));
 		}
 	}
 

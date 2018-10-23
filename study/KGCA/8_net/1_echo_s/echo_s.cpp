@@ -13,11 +13,9 @@ int main()
 {
 	int ret;
 
-	
 	WSADATA WSD;
 	ret = WSAStartup(MAKEWORD(2, 2), &WSD);        //윈도우 소켓 초기화
 	if (ret != 0) { return -1; }
-	
 	
 	SOCKET sock;
 	sock = socket(AF_INET, SOCK_STREAM, 0);        //소켓 생성	
@@ -37,7 +35,6 @@ int main()
 	if (ret == SOCKET_ERROR) { return -1; }
 	
 	while (true) {
-	
 		SOCKADDR_IN clientAddr;
 		int addrlen = sizeof(clientAddr);
 
@@ -49,26 +46,32 @@ int main()
 		}
 		printf("클라이언트 접속 [ip:%s]\n", inet_ntoa(clientAddr.sin_addr));
 
-		char buf[256] = { 0, };
-		int iLen = 0;
-		int iSendByte = 0;
-		int iRecvByte = 0;
 
+		//에코 시스템
 		while (true) {
-			iRecvByte = recv(client, buf, 256, 0);   //데이터를 받는다. 에러면 SOCKET_ERROR, 정상이면 받은 데이터크기를 반환한다.
-			if (iRecvByte == 0 || iRecvByte == SOCKET_ERROR) {
-				printf("클라이언트 접속 종료 [ip:%s]", inet_ntoa(clientAddr.sin_addr));
-				break; //클라이언트 종료
+			char recvBuf[256] = { 0, };
+			ZeroMemory(recvBuf, sizeof(recvBuf));
+			int iRecvByte = 0;
+			iRecvByte = recv(client, recvBuf, 256, 0);   //데이터를 받는다. 에러면 SOCKET_ERROR, 정상이면 받은 데이터크기를 반환한다.
+			if (iRecvByte == 0)  {
+				printf("클라이언트 정상 종료 [ip:%s]", inet_ntoa(clientAddr.sin_addr));
+				break;
 			}
-			buf[iRecvByte] = '\n';
-			printf("%s", buf);
-			iSendByte = send(client, buf, iRecvByte, 0);  //데이터를 보낸다. 
+			else if (iRecvByte == SOCKET_ERROR) {
+				printf("클라이언트 비정상 종료 [ip:%s]", inet_ntoa(clientAddr.sin_addr));
+				break;
+			}
+			recvBuf[iRecvByte] = '\n';
+			printf("%s", recvBuf);
+
+			int iSendByte = 0;
+			iSendByte = send(client, recvBuf, iRecvByte, 0);  //데이터를 보낸다. 
 			if (iSendByte == SOCKET_ERROR) {
 				printf("send 실패");
 				continue;
 			}
 		}
-		
+		//클라이언트 종료
 		closesocket(client);
 	}
 

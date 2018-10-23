@@ -28,6 +28,7 @@ int main()
 		std::string ip;
 		std::cout << "접속할 IP를 입력하세요. \n";
 		std::cin >> ip;
+		getc(stdin); //버퍼 비우기
 
 		SOCKADDR_IN addrIn; 
 		ZeroMemory(&addrIn, sizeof(addrIn));                        //htons : host to network short, ntohs : netword to host short     
@@ -37,19 +38,14 @@ int main()
 	
 		ret = connect(sock, (sockaddr*)&addrIn, sizeof(addrIn));    //입력한 IP로 접속시도.
 	} while (ret == SOCKET_ERROR);
-
 	
-
-
-	
-
-	getc(stdin);
 
 	std::cout << "서버 접속 성공 \n";
 
 	while (true) {
 		//메시지 전송
 		char sendBuf[256] = { 0, };
+		ZeroMemory(sendBuf, sizeof(sendBuf));
 		std::cout << "입력 : "; fgets(sendBuf, 256, stdin);
 		if (sendBuf[0] == '\n') { break; } //엔터만 치면 종료시키기.
 
@@ -63,19 +59,22 @@ int main()
 		//메시지 받기
 		char recvBuf[256] = { 0, };
 		int iRecvByte = 0;
-		iRecvByte = recv(sock, recvBuf, 256, 0);
-		if (iRecvByte == 0 || iRecvByte == SOCKET_ERROR) {
-			std::cout << "서버 종료";
+		iRecvByte = recv(sock, recvBuf, 256, 0);        //데이터 수신 함수
+		if (iRecvByte == 0 ) {
+			std::cout << "서버 정상 종료";
+		}
+		else if (iRecvByte == SOCKET_ERROR) {
+			std::cout << "서버 정상 종료";
 		}
 		recvBuf[iRecvByte] = '\n';
 
 		std::cout << recvBuf << std::endl;
 	}
 
-	//
+	//접속 종료
 	closesocket(sock);
 
-	//
+	//윈속 클리어
 	ret = WSACleanup();
 	if (ret == SOCKET_ERROR) {
 		std::cout << "클린업 실패";

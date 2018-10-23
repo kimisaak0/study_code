@@ -11,6 +11,7 @@ int main()
 		return -1;	
 	}
 
+	//소켓을 생성하고 넌블로킹 소켓으로 변환한다.
 	SOCKET sock;
 	sock = socket(AF_INET, SOCK_STREAM, 0);
 	iRet = NonBlockingSocket(sock, TRUE);
@@ -39,88 +40,57 @@ int main()
 		return -1;
 	}
 
-
-	int iUserCnt = 0;
-	SOCKET client;
 	std::list<SOCKET> userlist;
-	SOCKADDR_IN client_addr;
+	
 
-	while (iUserCnt < g_MaxUser) {
+	char buf[MAX_BUFFER_SIZE] = "안녕";
+	int iSendSize = 0;
+	int iRecvSize = 0;
+
+	while (true) {
+		SOCKADDR_IN client_addr;
 		int addrlen = sizeof(client_addr);
 
-		// 4)
-		client = accept(sock, (SOCKADDR*)&client_addr, &addrlen);
+		SOCKET client = 0;
+		client = accept(sock, (SOCKADDR*)&client_addr, &addrlen);  //클라이언트 정보를 새로운 소켓을 만들어서 저장. (연결처리)
 		if (client == SOCKET_ERROR) {
-			//논블록형 소켓일 경우에 오류(WSAEWOULDBLOCK)이라면 정상적인 반환이다.
 			if (WSAGetLastError() != WSAEWOULDBLOCK) {
-				ERR_EXIT(_T("accept"));
-				break;
+				ERR_EXIT(_T("클라이언트 연결 실패"));
 			}
 		}
 		else {
-			iRet = NonBlockingSocket(sock, TRUE);
-			if (iRet == SOCKET_ERROR) { return -1; }
-
-			char ip[INET_ADDRSTRLEN];
-			printf("[ip : %s]", inet_ntop(AF_INET, &(client_addr.sin_addr), ip, INET_ADDRSTRLEN));
-
+			printf("클라이언트 접속 [ip:%s]\n", inet_ntoa(client_addr.sin_addr));
 			userlist.push_back(client);
-			iUserCnt++;
 		}
-	}
-
-	char buf[MAX_BUFFER_SIZE] = { 0, };
-	
-	while (userlist.size() > 0) {
-		ZeroMemory(buf, sizeof(char)*MAX_BUFFER_SIZE);
-
+			
 		std::list<SOCKET>::iterator list_iter;
-		int iRecvSize;
 		for (list_iter = userlist.begin(); list_iter != userlist.end(); list_iter++) {
 			SOCKET client_temp = *list_iter;
-			// 5)
-			iRecvSize = recv(client_temp, buf, MAX_BUFFER_SIZE - 1, 0);
-			
-			if (iRecvSize == 0) {
-				char ip[INET_ADDRSTRLEN];
-				printf("EXIT! [ip : %s]", inet_ntop(AF_INET, &(client_addr.sin_addr), ip, INET_ADDRSTRLEN));
-				closesocket(client_temp);
-				userlist.erase(list_iter);
-				break; //리스트의 갯수가 중간에 변경되었으므로
-			}
-
-			if (iRecvSize == SOCKET_ERROR) {
-				if (WSAGetLastError() != WSAEWOULDBLOCK) {
-					//치명적인 오류
-					ERR_EXIT(_T("recv"));
-					closesocket(client_temp);
-					userlist.erase(list_iter);
-					break;
-				}
-			}
-
-			if (iRecvSize > 0) {
-				break;
-			}
+			iSendSize = send(client_temp, buf, strlen(buf), 0);
+			//if (iSendSize == SOCKET_ERROR) {
+			//	if (GetLastError() != WSAEWOULDBLOCK) {
+			//		closesocket(client_temp);
+			//		userlist.erase(list_iter);
+			//		continue;
+			//	}
+			//}
 		}
 
-		if (strlen(buf) > 0) {
-			printf("%s", buf);
-			int iSendSize;
-			for (list_iter = userlist.begin(); list_iter != userlist.end(); list_iter++) {
-				SOCKET client_temp = *list_iter;
-				// 6)
-				iSendSize = send(client_temp, buf, MAX_BUFFER_SIZE - 1, 0);
-				if (iSendSize == SOCKET_ERROR) {
-					ERR_EXIT(_T("send"));
-					closesocket(client_temp);
-					userlist.erase(list_iter);
-					break;
-				}
-			}
+		for (list_iter = userlist.begin(); list_iter != userlist.end(); list_iter++) {
+			SOCKET client_temp = *list_iter;
+			iRecvSize = recv(client_temp, buf, MAX_BUFFER_SIZE, 0);
+			//if (iRecvSize == SOCKET_ERROR) {
+			//	if (GetLastError() != WSAEWOULDBLOCK) {
+			//		closesocket(client_temp);
+			//		userlist.erase(list_iter);
+			//		continue;
+			//	}
+			//}
 		}
-		Sleep(1);
+
+		Sleep(1000);
 	}
+
 	printf("서버종료");
 	// 8)
 	closesocket(sock);

@@ -27,15 +27,7 @@ static void ERR_EXIT(const TCHAR* msg)
 	MessageBox(NULL, (TCHAR*)lpMsgBuf, msg, MB_ICONERROR);
 	LocalFree(lpMsgBuf);
 }
-static void ERR_print(const TCHAR* msg)
-{
-	LPVOID lpMsgBuf;
-	FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
-		NULL, WSAGetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-		(TCHAR*)&lpMsgBuf, 0, NULL);
-	printf("[%s] %s", msg, (char*)lpMsgBuf);
-	LocalFree(lpMsgBuf);
-}
+
 static int NonBlockingSocket(SOCKET sock, u_long uMode)
 {
 	//To make NonBlocking Socket, controls the I/O mode of a socket
@@ -45,5 +37,3 @@ static int NonBlockingSocket(SOCKET sock, u_long uMode)
 	}
 	return iRet;
 }
-
-const int g_MaxUser = 1;
