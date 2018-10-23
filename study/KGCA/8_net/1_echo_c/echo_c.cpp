@@ -7,67 +7,69 @@
 
 int main()
 {
-	WSADATA WSD;
 	int ret = 0;
 
-	//윈속 초기화
-	ret = WSAStartup(MAKEWORD(2, 2), &WSD);
+	WSADATA WSD;
+	ret = WSAStartup(MAKEWORD(2, 2), &WSD);        //윈도우 소켓 초기화
 	if (ret != 0) { return -1; }
 
-	//
-	SOCKET sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	
+	SOCKET sock;
+	sock = socket(AF_INET, SOCK_STREAM, 0);        //소켓 생성	
 	if (sock == INVALID_SOCKET) { return -1; }
 
-	std::string ip;
+	
 
 	do {
 		if (ret == SOCKET_ERROR) {
 			std::cout << "IP를 잘못 입력하셨거나, 서버가 닫혀있습니다.\n";
 		}
 
+		std::string ip;
 		std::cout << "접속할 IP를 입력하세요. \n";
 		std::cin >> ip;
 
-		SOCKADDR_IN addrIn;
-		ZeroMemory(&addrIn, sizeof(addrIn));
-		addrIn.sin_family = AF_INET;
-		addrIn.sin_addr.s_addr = inet_addr(ip.c_str());
-		//샘플용 프로그램의 포트번호는 10000으로 고정.
-		addrIn.sin_port = htons(10000);
-		//htons : host to network short, ntohs : netword to host short
-		//host : Little Endian 사용(뒤집어져서 저장됨), network : Big Endian 사용
-
-		ret = connect(sock, (sockaddr*)&addrIn, sizeof(addrIn));
+		SOCKADDR_IN addrIn; 
+		ZeroMemory(&addrIn, sizeof(addrIn));                        //htons : host to network short, ntohs : netword to host short     
+		addrIn.sin_family = AF_INET;						        //host : Little Endian 사용(뒤집어져서 저장됨), network : Big Endian 사용 
+		addrIn.sin_addr.s_addr = inet_addr(ip.c_str());		        //서버는 IP주소를 지정할 필요 없이 모든 IP(INADDR_ANY)를 받으면 된다.					
+		addrIn.sin_port = htons(10000);                             //샘플용 프로그램의 포트번호는 10000으로 고정.   
+	
+		ret = connect(sock, (sockaddr*)&addrIn, sizeof(addrIn));    //입력한 IP로 접속시도.
 	} while (ret == SOCKET_ERROR);
 
-	char buf[256] = { 0, };
-	size_t iLen = 0;
-	int iSendByte = 0;
-	int iRecvByte = 0;
+	
+
+
+	
 
 	getc(stdin);
 
 	std::cout << "서버 접속 성공 \n";
 
 	while (true) {
-		//메시지 보내기
-		ZeroMemory(buf, sizeof(char) * 256);
-		std::cout << "입력 : ";
-		 fgets(buf, 256, stdin);
-		if (buf[0] == '\n') { break; } //엔터만 치면 종료시키기.
-		iLen = strlen(buf) - 1;
-		iSendByte = send(sock, buf, (int)iLen, 0);
+		//메시지 전송
+		char sendBuf[256] = { 0, };
+		std::cout << "입력 : "; fgets(sendBuf, 256, stdin);
+		if (sendBuf[0] == '\n') { break; } //엔터만 치면 종료시키기.
+
+		size_t iLen = 0;
+		iLen = strlen(sendBuf) - 1;
+
+		int iSendByte = 0;
+		iSendByte = send(sock, sendBuf, (int)iLen, 0);  //데이터 전송 함수
 		std::cout << iSendByte << "byte 전송. \n";
 
-		//에코 받기
-		ZeroMemory(buf, sizeof(char) * 256);
-		iRecvByte = recv(sock, buf, 256, 0);
+		//메시지 받기
+		char recvBuf[256] = { 0, };
+		int iRecvByte = 0;
+		iRecvByte = recv(sock, recvBuf, 256, 0);
 		if (iRecvByte == 0 || iRecvByte == SOCKET_ERROR) {
 			std::cout << "서버 종료";
 		}
-		buf[iRecvByte] = '\n';
+		recvBuf[iRecvByte] = '\n';
 
-		std::cout << buf << std::endl;
+		std::cout << recvBuf << std::endl;
 	}
 
 	//

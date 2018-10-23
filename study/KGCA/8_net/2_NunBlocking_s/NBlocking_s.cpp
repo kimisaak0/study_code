@@ -6,13 +6,18 @@ int main()
 
 	WSADATA wsd;
 	iRet = WSAStartup(MAKEWORD(2, 2), &wsd);
-	if (iRet != (int)NO_ERROR) { return -1;	}
+	if (iRet != (int)NO_ERROR) { 
+		ERR_EXIT(_T("윈속 초기화 실패"));
+		return -1;	
+	}
 
 	SOCKET sock;
 	sock = socket(AF_INET, SOCK_STREAM, 0);
-
 	iRet = NonBlockingSocket(sock, TRUE);
-	if (iRet == SOCKET_ERROR) {	return -1; }
+	if (iRet == SOCKET_ERROR) {
+		ERR_EXIT(_T("대기 소켓 생성 실패"));
+		return -1;
+	}
 
 	SOCKADDR_IN sa_in;
 	ZeroMemory(&sa_in, sizeof(sa_in));
@@ -20,21 +25,30 @@ int main()
 	sa_in.sin_addr.s_addr = htonl(INADDR_ANY);
 	sa_in.sin_port = htons(10000);
 
+	// 0) 통신 환경 정보를 갖는 소켓을 생성. 이후 이 소켓을 이용해 실제 접속한 클라이언트 소켓을 생성함. (대기 소켓이라는 뜻)
 	iRet = bind(sock, (sockaddr*)&sa_in, sizeof(sa_in));
-	if (iRet == SOCKET_ERROR) { return -1; }
+	if (iRet == SOCKET_ERROR) {
+		ERR_EXIT(_T("소켓에 통신 환경 바인딩 실패"));
+		return -1;
+	}
 
+	// 1)클라이언트가 접속할 때 까지 대기
 	iRet = listen(sock, SOMAXCONN);
-	if (iRet == SOCKET_ERROR) { return -1; }
+	if (iRet == SOCKET_ERROR) {
+		ERR_EXIT(_T("대기상태 설정 실패"));
+		return -1;
+	}
 
-	SOCKADDR_IN client_addr;
 
 	int iUserCnt = 0;
-	std::list<SOCKET> userlist;
 	SOCKET client;
+	std::list<SOCKET> userlist;
+	SOCKADDR_IN client_addr;
 
 	while (iUserCnt < g_MaxUser) {
 		int addrlen = sizeof(client_addr);
 
+		// 4)
 		client = accept(sock, (SOCKADDR*)&client_addr, &addrlen);
 		if (client == SOCKET_ERROR) {
 			//논블록형 소켓일 경우에 오류(WSAEWOULDBLOCK)이라면 정상적인 반환이다.
@@ -64,6 +78,7 @@ int main()
 		int iRecvSize;
 		for (list_iter = userlist.begin(); list_iter != userlist.end(); list_iter++) {
 			SOCKET client_temp = *list_iter;
+			// 5)
 			iRecvSize = recv(client_temp, buf, MAX_BUFFER_SIZE - 1, 0);
 			
 			if (iRecvSize == 0) {
@@ -94,7 +109,8 @@ int main()
 			int iSendSize;
 			for (list_iter = userlist.begin(); list_iter != userlist.end(); list_iter++) {
 				SOCKET client_temp = *list_iter;
-				iSendSize = recv(client_temp, buf, MAX_BUFFER_SIZE - 1, 0);
+				// 6)
+				iSendSize = send(client_temp, buf, MAX_BUFFER_SIZE - 1, 0);
 				if (iSendSize == SOCKET_ERROR) {
 					ERR_EXIT(_T("send"));
 					closesocket(client_temp);
@@ -106,6 +122,7 @@ int main()
 		Sleep(1);
 	}
 	printf("서버종료");
+	// 8)
 	closesocket(sock);
 	WSACleanup();
 	return 0;

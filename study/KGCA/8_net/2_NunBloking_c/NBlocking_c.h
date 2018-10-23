@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 
 #pragma once
 #pragma comment(lib, "ws2_32.lib")
@@ -11,37 +12,39 @@
 
 #define MAX_BUFFER_SIZE 256
 
-
-//오류 내용이 제대로 나오지 않음. 
 //오류 처리를 위한 함수
 static void ERR_EXIT(const TCHAR* msg)
 {
+	setlocale(LC_ALL, "KOREAN"); // 지역 설정.
+
 	LPVOID lpMsgBuf;
 	FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
-		NULL, WSAGetLastError(), 
+		NULL, GetLastError(),
 		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 		(TCHAR*)&lpMsgBuf, 0, NULL);
-	MessageBox(NULL, (TCHAR*)&lpMsgBuf, msg, MB_ICONERROR);
+	MessageBox(NULL, (TCHAR*)lpMsgBuf, msg, MB_ICONERROR);
 	LocalFree(lpMsgBuf);
 }
 
-static void ERR_print(const TCHAR* msg)
-{
-	LPVOID lpMsgBuf;
-	FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
-		NULL, WSAGetLastError(),
-		GetLocaleInfoEx(LOCALE_NAME_SYSTEM_DEFAULT, LOCALE_RETURN_NUMBER, 0, 0),
-		(TCHAR*)&lpMsgBuf, 0, NULL);
-	printf("[%s] %s", (char*)msg, (char*)lpMsgBuf);
-	LocalFree(lpMsgBuf);
-}
+//static void ERR_print(const TCHAR* msg)
+//{
+//	setlocale(LC_ALL, "KOREAN"); // 지역 설정.
+//
+//	LPVOID lpMsgBuf;
+//	FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+//		NULL, WSAGetLastError(),
+//		GetLocaleInfoEx(LOCALE_NAME_SYSTEM_DEFAULT, LOCALE_RETURN_NUMBER, 0, 0),
+//		(TCHAR*)&lpMsgBuf, 0, NULL);
+//	printf("[%s] %s", (char*)msg, (char*)lpMsgBuf);
+//	LocalFree(lpMsgBuf);
+//}
 
 static int NonBlockingSocket(SOCKET sock, u_long uMode)
 {
 	//To make NonBlocking Socket, controls the I/O mode of a socket
 	int iRet = ioctlsocket(sock, FIONBIO, &uMode);
 	if (iRet != NO_ERROR) {
-		ERR_EXIT(_T("ioctlsocket"));
+		ERR_EXIT(_T("논블록킹 소켓으로 변환 실패"));
 	}
 	return iRet;
 }
