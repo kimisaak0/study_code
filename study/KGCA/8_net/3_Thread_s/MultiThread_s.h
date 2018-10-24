@@ -3,17 +3,9 @@
 #pragma once
 #pragma comment(lib, "ws2_32.lib")
 #include <WinSock2.h>
-#include <ws2tcpip.h>
-
 #include <iostream>
-#include <string>
 #include <tchar.h>
-#include <conio.h>
-
-#include <vector>
 #include <list>
-
-#define MAX_BUFFER_SIZE 256
 
 std::list<SOCKET> g_userlist;
 
@@ -30,15 +22,37 @@ static void ERR_EXIT(const TCHAR* msg)
 	LocalFree(lpMsgBuf);
 }
 
-static int NonBlockingSocket(SOCKET sock, u_long uMode)
+DWORD WINAPI ClientThread(LPVOID arg)
 {
-	//To make NonBlocking Socket, controls the I/O mode of a socket
-	int iRet = ioctlsocket(sock, FIONBIO, &uMode);
-	if (iRet != NO_ERROR) {
-		ERR_EXIT(_T("ioctlsocket"));
+	SOCKET sock = (SOCKET)arg;
+
+	SOCKADDR_IN clientInfo;
+	int addrlen = sizeof(clientInfo);
+	getpeername(sock, (sockaddr*)&clientInfo, &addrlen);
+	
+	char buf[256] = { 0, };
+	while (true) {
+		ZeroMemory(&buf, sizeof(char) * 256);
+
+		int iRecvByte = recv(sock, buf, 255, 0);
+		if (iRecvByte == 0 || iRecvByte == SOCKET_ERROR) {
+			printf("클라이언트[%s] 접속 종료", inet_ntoa(clientInfo.sin_addr));
+			break;
+		}
+		buf[iRecvByte] = 0;
+		printf("\n%s", buf);
+
+		int iSendByte = send(sock, buf, iRecvByte, 0);
+		if (iSendByte == 0 || iSendByte == SOCKET_ERROR) {
+			printf("클라이언트[%s] 접속 종료", inet_ntoa(clientInfo.sin_addr));
+			break;
+		}
 	}
-	return iRet;
+
+	closesocket(sock);
+	return 0;
 }
+
 
 SOCKET Init()
 {
@@ -54,6 +68,7 @@ SOCKET Init()
 	}
 
 	sock = socket(AF_INET, SOCK_STREAM, 0);
+
 
 	SOCKADDR_IN sa_in;
 	ZeroMemory(&sa_in, sizeof(sa_in));

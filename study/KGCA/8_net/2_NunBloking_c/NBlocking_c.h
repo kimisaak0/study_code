@@ -36,34 +36,9 @@ static int NonBlockingSocket(SOCKET sock, u_long uMode)
 	return iRet;
 }
 
-//static bool tConnect(SOCKET sock, int out_time)
-//{
-//	int iRet;
-//
-//	TIMEVAL TimeOut;
-//	TimeOut.tv_sec = out_time;
-//	TimeOut.tv_usec = 0;
-//	
-//	NonBlockingSocket(sock, TRUE);
-//
-//	//블로킹 소켓으로 다시 전환한다.
-//	NonBlockingSocket(sock, FALSE);
-//
-//	fd_set Write, Err;
-//	FD_ZERO(&Write);
-//	FD_ZERO(&Err);
-//	FD_SET(sock, &Write);
-//	FD_SET(sock, &Err);
-//
-//	//블로킹 소켓으로 타임아웃만큼 대기한다.
-//	iRet = select(0, NULL, &Write, &Err, &TimeOut);
-//	if (iRet == 0) {
-//		return true; //타임아웃
-//	}
-//	if (FD_ISSET(sock, &Write)) {
-//		return true; //connected!
-//	}
-////	if (FD_ISSET(sock, &Err)) 
-//		return false; //Error
-//}
-
+void Release(SOCKET sock)
+{
+	// 8)
+	closesocket(sock);
+	WSACleanup();
+}

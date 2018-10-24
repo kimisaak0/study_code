@@ -2,28 +2,36 @@
 
 #include "NBlocking_c.h"
 
-int main()
+SOCKET Init()
 {
 	int iRet;
 
 	WSADATA wsd;
 	iRet = WSAStartup(MAKEWORD(2, 2), &wsd);
-	if ( iRet != (int)NO_ERROR) { 
+	if (iRet != (int)NO_ERROR) {
 		ERR_EXIT(L"윈속 초기화 실패");
-		return -1; 
+		return -1;
 	}
 
 	SOCKET sock;
-	sock = socket(AF_INET, SOCK_STREAM,0);
+	sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (sock == INVALID_SOCKET) {
 		ERR_EXIT(_T("소켓 생성 실패"));
 		return -1;
 	}
 
+	return sock;
+}
+
+bool IPConnect(SOCKET sock)
+{
+	int iRet = 0;
+
 	// 서버 접속 처리
 	do {
 		if (iRet == SOCKET_ERROR) {
 			std::cout << "IP를 잘못 입력하셨거나, 서버가 닫혀있습니다.\n";
+			//return false;
 		}
 
 		std::string ip;
@@ -39,7 +47,19 @@ int main()
 		iRet = connect(sock, (sockaddr*)&sa_in, sizeof(sa_in));    //입력한 IP로 접속시도.
 	} while (iRet == SOCKET_ERROR);
 
-	std::cout << "서버 접속 성공 \n";
+	return true;
+}
+
+int main()
+{
+	int iRet;
+
+	SOCKET sock = Init();
+
+
+	if (IPConnect(sock)) {
+		std::cout << "서버 접속 성공 \n";
+	}
 
 	//논블록킹 소켓으로 전환
 	iRet = NonBlockingSocket(sock, TRUE);
@@ -48,13 +68,14 @@ int main()
 	char buf[MAX_BUFFER_SIZE] = { 0, };
 	int iEnd = 0;
 
+	getc(stdin); //버퍼 비우기
+
 	//메시지 처리
 	while (true) {
 		if ((bool)_kbhit() == true) {
 			iRet = NonBlockingSocket(sock, FALSE);
 			if (iRet == SOCKET_ERROR) { return -1; }
 
-			getc(stdin); //버퍼 비우기
 			getc(stdin); //버퍼 비우기
 
 			char sendBuf[256] = { 0, };
@@ -91,9 +112,7 @@ int main()
 		}
 	}
 
-	//8)
-	closesocket(sock);
-	WSACleanup();
+	Release(sock);
 
 	return 0;
 }

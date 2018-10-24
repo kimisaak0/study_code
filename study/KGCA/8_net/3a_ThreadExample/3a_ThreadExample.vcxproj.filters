@@ -15,10 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="odbc_Sample.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="소스.cpp">
+    <ClCompile Include="Sample.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
