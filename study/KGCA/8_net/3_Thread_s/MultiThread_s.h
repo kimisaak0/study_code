@@ -22,6 +22,17 @@ static void ERR_EXIT(const TCHAR* msg)
 	LocalFree(lpMsgBuf);
 }
 
+static int NonBlockingSocket(SOCKET sock, u_long uMode)
+{
+	//To make NonBlocking Socket, controls the I/O mode of a socket
+	int iRet = ioctlsocket(sock, FIONBIO, &uMode);
+	if (iRet != NO_ERROR) {
+		ERR_EXIT(_T("ioctlsocket"));
+	}
+	return iRet;
+}
+
+//접속 종료된 클라이언트를 리스트에서 지우려면?
 DWORD WINAPI ClientThread(LPVOID arg)
 {
 	SOCKET sock = (SOCKET)arg;
@@ -37,19 +48,19 @@ DWORD WINAPI ClientThread(LPVOID arg)
 		int iRecvByte = recv(sock, buf, 255, 0);
 		if (iRecvByte == 0 || iRecvByte == SOCKET_ERROR) {
 			printf("클라이언트[%s] 접속 종료", inet_ntoa(clientInfo.sin_addr));
-			break;
+			closesocket(sock);
+			return 0;
 		}
 		buf[iRecvByte] = 0;
 		printf("\n%s", buf);
 
-		int iSendByte = send(sock, buf, iRecvByte, 0);
-		if (iSendByte == 0 || iSendByte == SOCKET_ERROR) {
-			printf("클라이언트[%s] 접속 종료", inet_ntoa(clientInfo.sin_addr));
-			break;
+		std::list<SOCKET>::iterator iter;
+		for (iter = g_userlist.begin(); iter != g_userlist.end(); iter++) {
+			SOCKET client_temp = *iter;
+			int iSendByte = send(client_temp, buf, (int)strlen(buf), 0);
 		}
 	}
 
-	closesocket(sock);
 	return 0;
 }
 
@@ -95,6 +106,8 @@ SOCKET Init()
 
 bool ClientAccept(SOCKET sock)
 {
+	NonBlockingSocket(sock, TRUE);
+
 	SOCKADDR_IN client_addr;
 	int addrlen = sizeof(client_addr);
 
@@ -110,6 +123,8 @@ bool ClientAccept(SOCKET sock)
 		printf("클라이언트 접속 [ip:%s]\n", inet_ntoa(client_addr.sin_addr));
 		g_userlist.push_back(client);
 	}
+
+	NonBlockingSocket(sock, FALSE);
 
 	return true;
 }
