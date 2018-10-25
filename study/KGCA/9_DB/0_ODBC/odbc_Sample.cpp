@@ -23,36 +23,37 @@ static WCHAR* GetMtW(const char* data)
 
 void Select()
 {
-	SQLCHAR cName[20] = { 0, };
-	int iPrice = 0;
-	BOOL bKorean;
-	SQLLEN lName, lPrice, lKorean;
-	SQLBindCol(g_hStmt, 1, SQL_C_CHAR, cName, sizeof(cName), &lName);
-	SQLBindCol(g_hStmt, 2, SQL_C_ULONG, &iPrice, 0, &lPrice);
-	SQLBindCol(g_hStmt, 3, SQL_C_ULONG, &bKorean, 0, &lKorean);
+	SQLCHAR cID[20] = { 0, };
+	SQLCHAR cPASS[20] = { 0, };
+	SQLLEN lID, lPASS;
+	SQLBindCol(g_hStmt, 1, SQL_C_CHAR, cID, sizeof(cID), &lID);
+	SQLBindCol(g_hStmt, 2, SQL_C_CHAR, cPASS, sizeof(cPASS), &lPASS);
 
 
-	if (SQLExecDirect(g_hStmt, (SQLTCHAR*)_T("select name,price,korean from tblCigar"), SQL_NTS) != SQL_SUCCESS) {
+	if (SQLExecDirect(g_hStmt, (SQLTCHAR*)_T("select Client_ID, Client_pass from user_list"), SQL_NTS) != SQL_SUCCESS) {
 		return;
 	}
 
 	while (SQLFetch(g_hStmt) != SQL_NO_DATA) {
-		printf("%s : %d원 국산 : %d  \n", cName, iPrice, bKorean);
+		printf("ID : %s, PASS : %s  \n", cID, cPASS);
 	}
 
 	SQLCloseCursor(g_hStmt);
 }
 
 
-void Add(const char* name, int price)
+void Add(const char* name, const char* pass)
 {
-	const wchar_t* cName = GetMtW(name);
-	int iPrice = price;
+	wchar_t cID[26] = { 0, };
+	_tcscpy_s(cID, GetMtW(name));
+	wchar_t cPASS[26] = { 0, };
+	_tcscpy_s(cPASS, GetMtW(pass));
+
 	TCHAR buffer[256] = { 0, };
 
-	wsprintf((LPTSTR)buffer, _T("Insert into tblCigar (name, price, korean) VALUES ('%s', %d, TRUE)"), cName, iPrice);
+	wsprintf((LPTSTR)buffer, _T("Insert into user_list (Client_ID, Client_pass) VALUES ('%s', '%s')"), cID, cPASS);
 
-	if (SQLExecDirect(g_hStmt, buffer, SQL_NTS) == SQL_SUCCESS) {
+	if (SQLExecDirect(g_hStmt, (SQLTCHAR*)buffer, SQL_NTS) == SQL_SUCCESS) {
 		SQLCloseCursor(g_hStmt);
 		Select();
 	}
@@ -61,12 +62,13 @@ void Add(const char* name, int price)
 
 void Delete(const char* name)
 {
-	const wchar_t* cName = GetMtW(name);
+	wchar_t cID[26] = { 0, };
+	_tcscpy_s(cID, GetMtW(name));
 	TCHAR buffer[256] = { 0, };
 
-	wsprintf((LPTSTR)buffer, _T("Delete from tblCigar where name = '%s'"), cName);
+	wsprintf((LPTSTR)buffer, _T("Delete from user_list where Client_ID = '%s'"), cID);
 
-	if (SQLExecDirect(g_hStmt, buffer, SQL_NTS) == SQL_SUCCESS) {
+	if (SQLExecDirect(g_hStmt, (SQLTCHAR*)buffer, SQL_NTS) == SQL_SUCCESS) {
 		SQLCloseCursor(g_hStmt);
 		Select();
 	}
@@ -75,24 +77,20 @@ void Delete(const char* name)
 
 void Update(const char* name)
 {
-	const wchar_t* cName = GetMtW(name);
+	const wchar_t* cID = GetMtW(name);
 
-	wchar_t* UpdateName = new wchar_t;
-	std::cout << "바꿀 이름을 입력하세요.";
-	wscanf(L"%s", UpdateName);
+	wchar_t* UpdatePASS = new wchar_t;
+	std::cout << "바꿀 패스워드를 입력하세요. \n";
+	wscanf(L"%s", UpdatePASS);
 
 	getc(stdin);
 
-	int UpdatePrice = 0;
-	std::cout << "바꿀 가격을 입력하세요.";
-	scanf("%d", &UpdatePrice);
-
 	TCHAR buffer[256] = { 0, };
 
-	wsprintf((LPTSTR)buffer, _T("Update tblCigar set name = '%s', price = %d where name = '%s'"), UpdateName, UpdatePrice, cName);
+	wsprintf((LPTSTR)buffer, _T("Update user_list set Client_PASS = '%s' where Client_ID = '%s'"), UpdatePASS, cID);
 
 	SQLCloseCursor(g_hStmt);
-	if (SQLExecDirect(g_hStmt, buffer, SQL_NTS) == SQL_SUCCESS) {
+	if (SQLExecDirect(g_hStmt, (SQLTCHAR*)buffer, SQL_NTS) == SQL_SUCCESS) {
 		SQLCloseCursor(g_hStmt);
 		Select();
 	}
@@ -112,16 +110,13 @@ int main()
 
 	//연결 핸들
 	SQLAllocHandle(SQL_HANDLE_DBC, g_hEnv, &g_hDbc);
+	SQLTCHAR dsn[256] = _T("Sample_db");
 
-	SQLTCHAR szInCon[256] = _T("FileDsn=.\\cigarette.mdb.dsn");
-	//_stprintf(szInCon, _T("DRIVER={Microsoft Access Driver (*.mdb)}; DBQ=cigarette.mdb; "));
-	SQLTCHAR szOutCon[256] = { 0, };
-	SQLSMALLINT cbCon = 0;
-
-	SQLRETURN ret = SQLDriverConnect(g_hDbc, NULL, szInCon, _countof(szInCon), szOutCon, _countof(szOutCon), &cbCon, SQL_DRIVER_NOPROMPT);
+	SQLRETURN ret = SQLConnect(g_hDbc, (SQLTCHAR*)dsn, SQL_NTS, (SQLTCHAR*)L"sa", SQL_NTS, (SQLTCHAR*)L"kgca!@34", SQL_NTS);
 	if (ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO) {
 		return -1;
 	}
+
 
 	//명령 핸들
 	SQLAllocHandle(SQL_HANDLE_STMT, g_hDbc, &g_hStmt);
@@ -129,7 +124,7 @@ int main()
 	while (true) {
 		int iSelect = 0;
 
-		std::cout << "\n1. 출력, 2. 삽입 3. 삭제 4. 수정";
+		std::cout << "\n1. 회원목록 출력, 2. 회원가입 3. 탈퇴 4. 비밀번호수정";
 		std::cin >> iSelect;
 
 		switch (iSelect) {
@@ -138,11 +133,11 @@ int main()
 			} break;
 
 			case 2: { 
-				char name[26];
-				int price;
-				std::cout << "필드명을 입력하세요 : "; scanf("%s", name);
-				std::cout << "가격을 입력하세요 : "; std::cin >> price;
-				Add(name, price); 
+				char name[26] = { 0, };
+				char pass[26] = { 0, };
+				std::cout << "ID를 입력하세요 : "; scanf("%s", name);
+				std::cout << "PASS를 입력하세요 : "; scanf("%s", pass);
+				Add(name, pass);
 			} break;
 
 			case 3: {

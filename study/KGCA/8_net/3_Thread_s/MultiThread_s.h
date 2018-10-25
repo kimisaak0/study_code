@@ -51,13 +51,15 @@ DWORD WINAPI ClientThread(LPVOID arg)
 			closesocket(sock);
 			return 0;
 		}
-		buf[iRecvByte] = 0;
-		printf("\n%s", buf);
+		else {
+			buf[iRecvByte] = 0;
+			printf("\n%s", buf);
 
-		std::list<SOCKET>::iterator iter;
-		for (iter = g_userlist.begin(); iter != g_userlist.end(); iter++) {
-			SOCKET client_temp = *iter;
-			int iSendByte = send(client_temp, buf, (int)strlen(buf), 0);
+			std::list<SOCKET>::iterator iter;
+			for (iter = g_userlist.begin(); iter != g_userlist.end(); iter++) {
+				SOCKET client_temp = *iter;
+				int iSendByte = send(client_temp, buf, (int)strlen(buf), 0);
+			}
 		}
 	}
 
@@ -104,6 +106,12 @@ SOCKET Init()
 	return sock;
 }
 
+
+void acceptCheck(SOCKET sock)
+{
+
+}
+
 bool ClientAccept(SOCKET sock)
 {
 	NonBlockingSocket(sock, TRUE);
@@ -116,8 +124,8 @@ bool ClientAccept(SOCKET sock)
 	if (client == SOCKET_ERROR) {
 		if (WSAGetLastError() != WSAEWOULDBLOCK) {
 			ERR_EXIT(_T("클라이언트 연결 실패"));
-			return false;
 		}
+		return false;
 	}
 	else {
 		printf("클라이언트 접속 [ip:%s]\n", inet_ntoa(client_addr.sin_addr));
