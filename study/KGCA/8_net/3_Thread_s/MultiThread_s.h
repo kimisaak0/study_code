@@ -32,40 +32,6 @@ static int NonBlockingSocket(SOCKET sock, u_long uMode)
 	return iRet;
 }
 
-//접속 종료된 클라이언트를 리스트에서 지우려면?
-DWORD WINAPI ClientThread(LPVOID arg)
-{
-	SOCKET sock = (SOCKET)arg;
-
-	SOCKADDR_IN clientInfo;
-	int addrlen = sizeof(clientInfo);
-	getpeername(sock, (sockaddr*)&clientInfo, &addrlen);
-	
-	char buf[256] = { 0, };
-	while (true) {
-		ZeroMemory(&buf, sizeof(char) * 256);
-
-		int iRecvByte = recv(sock, buf, 255, 0);
-		if (iRecvByte == 0 || iRecvByte == SOCKET_ERROR) {
-			printf("클라이언트[%s] 접속 종료", inet_ntoa(clientInfo.sin_addr));
-			closesocket(sock);
-			return 0;
-		}
-		else {
-			buf[iRecvByte] = 0;
-			printf("\n%s", buf);
-
-			std::list<SOCKET>::iterator iter;
-			for (iter = g_userlist.begin(); iter != g_userlist.end(); iter++) {
-				SOCKET client_temp = *iter;
-				int iSendByte = send(client_temp, buf, (int)strlen(buf), 0);
-			}
-		}
-	}
-
-	return 0;
-}
-
 
 SOCKET Init()
 {
@@ -107,11 +73,6 @@ SOCKET Init()
 }
 
 
-void acceptCheck(SOCKET sock)
-{
-
-}
-
 bool ClientAccept(SOCKET sock)
 {
 	NonBlockingSocket(sock, TRUE);
@@ -136,6 +97,60 @@ bool ClientAccept(SOCKET sock)
 
 	return true;
 }
+
+void acceptCheck()
+{
+	std::list<SOCKET>::iterator iter;
+	for (iter = g_userlist.begin(); iter != g_userlist.end(); ) {
+		SOCKET client_temp = *iter;
+		int iSendByte = send(client_temp, _T(" "), 2, 0);
+		if (iSendByte == SOCKET_ERROR) {
+			SOCKADDR_IN clientInfo;
+			int addrlen = sizeof(clientInfo);
+			getpeername(*iter, (sockaddr*)&clientInfo, &addrlen);
+			printf("클라이언트[%s] 접속 종료", inet_ntoa(clientInfo.sin_addr));
+			closesocket(*iter);
+			g_userlist.erase(iter);
+		}
+		else {
+			iter++;
+		}
+	}
+}
+
+DWORD WINAPI ClientThread(LPVOID arg)
+{
+	SOCKET sock = (SOCKET)arg;
+
+	SOCKADDR_IN clientInfo;
+	int addrlen = sizeof(clientInfo);
+	getpeername(sock, (sockaddr*)&clientInfo, &addrlen);
+
+	char buf[256] = { 0, };
+	while (true) {
+		ZeroMemory(&buf, sizeof(char) * 256);
+
+		int iRecvByte = recv(sock, buf, 255, 0);
+		if (iRecvByte == 0 || iRecvByte == SOCKET_ERROR) {
+			printf("클라이언트[%s] 접속 종료", inet_ntoa(clientInfo.sin_addr));
+			closesocket(sock);
+			return 0;
+		}
+		else {
+			buf[iRecvByte] = 0;
+			printf("\n%s", buf);
+
+			std::list<SOCKET>::iterator iter;
+			for (iter = g_userlist.begin(); iter != g_userlist.end(); iter++) {
+				SOCKET client_temp = *iter;
+				int iSendByte = send(client_temp, buf, (int)strlen(buf), 0);
+			}
+		}
+	}
+
+	return 0;
+}
+
 
 void Release(SOCKET sock)
 {

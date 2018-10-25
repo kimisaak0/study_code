@@ -1,18 +1,13 @@
-#define _CRT_SECURE_NO_WARNINGS
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
 
 #pragma once
 #pragma comment(lib, "ws2_32.lib")
 #include <WinSock2.h>
-//#include <ws2tcpip.h>
-
 #include <iostream>
 #include <string>
 #include <tchar.h>
 #include <conio.h>
 
-#define MAX_BUFFER_SIZE 256
-
-//오류 처리를 위한 함수
 static void ERR_EXIT(const TCHAR* msg)
 {
 	setlocale(LC_ALL, "KOREAN"); // 지역 설정.
@@ -26,21 +21,50 @@ static void ERR_EXIT(const TCHAR* msg)
 	LocalFree(lpMsgBuf);
 }
 
+static int NonBlockingSocket(SOCKET sock, u_long uMode)
+{
+	//To make NonBlocking Socket, controls the I/O mode of a socket
+	int iRet = ioctlsocket(sock, FIONBIO, &uMode);
+	if (iRet != NO_ERROR) {
+		ERR_EXIT(_T("ioctlsocket"));
+	}
+	return iRet;
+}
+
+
 SOCKET Init()
 {
 	int iRet;
 
+	SOCKET sock;
+
 	WSADATA wsd;
 	iRet = WSAStartup(MAKEWORD(2, 2), &wsd);
 	if (iRet != (int)NO_ERROR) {
-		ERR_EXIT(L"윈속 초기화 실패");
+		ERR_EXIT(_T("윈속 초기화 실패"));
 		return -1;
 	}
 
-	SOCKET sock;
 	sock = socket(AF_INET, SOCK_STREAM, 0);
-	if (sock == INVALID_SOCKET) {
-		ERR_EXIT(_T("소켓 생성 실패"));
+
+
+	SOCKADDR_IN sa_in;
+	ZeroMemory(&sa_in, sizeof(sa_in));
+	sa_in.sin_family = AF_INET;
+	sa_in.sin_addr.s_addr = htonl(INADDR_ANY);
+	sa_in.sin_port = htons(10000);
+
+	// 0) 통신 환경 정보를 갖는 소켓을 생성. 이후 이 소켓을 이용해 실제 접속한 클라이언트 소켓을 생성함. (대기 소켓이라는 뜻)
+	iRet = bind(sock, (sockaddr*)&sa_in, sizeof(sa_in));
+	if (iRet == SOCKET_ERROR) {
+		ERR_EXIT(_T("소켓에 통신 환경 바인딩 실패"));
+		return -1;
+	}
+
+	// 1)클라이언트가 접속할 때 까지 대기
+	iRet = listen(sock, SOMAXCONN);
+	if (iRet == SOCKET_ERROR) {
+		ERR_EXIT(_T("대기상태 설정 실패"));
 		return -1;
 	}
 
@@ -57,7 +81,6 @@ bool IPConnect(SOCKET sock)
 			std::cout << "IP를 잘못 입력하셨거나, 서버가 닫혀있습니다.\n";
 			//return false;
 		}
-
 		std::string ip;
 		std::cout << "접속할 IP를 입력하세요. \n";
 		std::cin >> ip;
@@ -74,14 +97,14 @@ bool IPConnect(SOCKET sock)
 	return true;
 }
 
-//소켓을 넌블로킹 소켓으로 변환한다.
-static int NonBlockingSocket(SOCKET sock, u_long uMode)
-{	
-	int iRet = ioctlsocket(sock, FIONBIO, &uMode);
-	if (iRet != NO_ERROR) {
-		ERR_EXIT(_T("논블록킹 소켓으로 변환 실패"));
+DWORD WINAPI SendThread(LPVOID arg) 
+{
+	SOCKET sock = (SOCKET)arg;
+	char buf[256] = { 0, };
+	while (true) {
+		ZeroMemory(buf, sizeof(char) * 256);
+
 	}
-	return iRet;
 }
 
 void Release(SOCKET sock)
