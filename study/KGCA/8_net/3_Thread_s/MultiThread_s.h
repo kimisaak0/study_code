@@ -32,6 +32,68 @@ static int NonBlockingSocket(SOCKET sock, u_long uMode)
 	return iRet;
 }
 
+#define ACCEPTCHECK 0000
+#define CHAT_MSG    1000
+
+struct packHead
+{
+	WORD type;
+	WORD length;
+};
+
+struct packet
+{
+	packHead ph;
+	char buf[256];
+};
+
+int SendData(SOCKET sock, packet* pack)
+{
+	int iSendTotal = 0;
+	if (pack->ph.type == ACCEPTCHECK) {
+		do {
+			int iSend = send(sock, (char*)pack, sizeof(packet) - iSendTotal, 0);
+			iSendTotal += iSend;
+		} while (iSendTotal < sizeof(packet));
+		return -2;
+	}
+
+	do {
+		int iSend = send(sock, (char*)pack, sizeof(packet) - iSendTotal, 0);
+		iSendTotal += iSend;
+	} while (iSendTotal < sizeof(packet));
+
+	return iSendTotal;
+}
+
+int RecvData(SOCKET client, char* retstr)
+{
+	char buf[256] = { 0, };
+
+	int iRecvTotal = 0;
+	do {
+		int iRecv = recv(client, &buf[iRecvTotal], sizeof(packHead) - iRecvTotal, 0);
+		if (iRecv == 0 || iRecv == SOCKET_ERROR) {
+			return iRecv;
+		}
+		iRecvTotal += iRecv;
+	} while (iRecvTotal < sizeof(packHead));
+
+	packHead* recvPH = (packHead*)buf;
+	switch (recvPH->type) {
+		case ACCEPTCHECK: {
+			return -2;
+		} break;
+		case CHAT_MSG: {
+			do {
+				int iRecv = recv(client, &buf[iRecvTotal], recvPH->length - iRecvTotal, 0);
+				iRecvTotal += iRecv;
+			} while (iRecvTotal < sizeof(recvPH->length));
+			memcpy(retstr, buf, recvPH->length);
+			return iRecvTotal;
+		} break;
+	}
+}
 
 SOCKET Init()
 {
@@ -73,7 +135,7 @@ SOCKET Init()
 }
 
 
-bool ClientAccept(SOCKET sock)
+SOCKET ClientAccept(SOCKET sock)
 {
 	NonBlockingSocket(sock, TRUE);
 
@@ -82,20 +144,14 @@ bool ClientAccept(SOCKET sock)
 
 	SOCKET client = 0;
 	client = accept(sock, (SOCKADDR*)&client_addr, &addrlen);  //클라이언트 정보를 새로운 소켓을 만들어서 저장. (연결처리)
-	if (client == SOCKET_ERROR) {
-		if (WSAGetLastError() != WSAEWOULDBLOCK) {
-			ERR_EXIT(_T("클라이언트 연결 실패"));
-		}
-		return false;
-	}
-	else {
+	if ((int)client != SOCKET_ERROR) {
 		printf("클라이언트 접속 [ip:%s]\n", inet_ntoa(client_addr.sin_addr));
 		g_userlist.push_back(client);
+		return client;
 	}
-
 	NonBlockingSocket(sock, FALSE);
-
-	return true;
+	return false;
+	
 }
 
 void acceptCheck()
@@ -103,14 +159,17 @@ void acceptCheck()
 	std::list<SOCKET>::iterator iter;
 	for (iter = g_userlist.begin(); iter != g_userlist.end(); ) {
 		SOCKET client_temp = *iter;
-		int iSendByte = send(client_temp, _T(" "), 2, 0);
+		packHead ph = { ACCEPTCHECK, 0 };
+		packet pack = { ph, "" };
+		int iSendByte = SendData(client_temp, &pack);
 		if (iSendByte == SOCKET_ERROR) {
 			SOCKADDR_IN clientInfo;
 			int addrlen = sizeof(clientInfo);
 			getpeername(*iter, (sockaddr*)&clientInfo, &addrlen);
-			printf("클라이언트[%s] 접속 종료", inet_ntoa(clientInfo.sin_addr));
+			printf("클라이언트[%s] 접속 종료\n", inet_ntoa(clientInfo.sin_addr));
 			closesocket(*iter);
 			g_userlist.erase(iter);
+			break;
 		}
 		else {
 			iter++;
@@ -120,30 +179,26 @@ void acceptCheck()
 
 DWORD WINAPI ClientThread(LPVOID arg)
 {
-	SOCKET sock = (SOCKET)arg;
+	SOCKET client = (SOCKET)arg;
 
 	SOCKADDR_IN clientInfo;
 	int addrlen = sizeof(clientInfo);
-	getpeername(sock, (sockaddr*)&clientInfo, &addrlen);
+	getpeername(client, (sockaddr*)&clientInfo, &addrlen);
 
-	char buf[256] = { 0, };
+	char recvBuf[256] = { 0, };
 	while (true) {
-		ZeroMemory(&buf, sizeof(char) * 256);
-
-		int iRecvByte = recv(sock, buf, 255, 0);
-		if (iRecvByte == 0 || iRecvByte == SOCKET_ERROR) {
-			printf("클라이언트[%s] 접속 종료", inet_ntoa(clientInfo.sin_addr));
-			closesocket(sock);
-			return 0;
-		}
-		else {
-			buf[iRecvByte] = 0;
-			printf("\n%s", buf);
-
+		ZeroMemory(&recvBuf, sizeof(char) * 256);
+		int iRecvByte = RecvData(client, recvBuf);
+		if (iRecvByte > 0) {
+			printf("\n%s", recvBuf);
 			std::list<SOCKET>::iterator iter;
 			for (iter = g_userlist.begin(); iter != g_userlist.end(); iter++) {
 				SOCKET client_temp = *iter;
-				int iSendByte = send(client_temp, buf, (int)strlen(buf), 0);
+				packHead ph = { CHAT_MSG, strlen(recvBuf) };
+				packet pack;
+				pack.ph = ph;
+				strcpy_s(pack.buf, recvBuf);
+				SendData(client_temp, &pack);
 			}
 		}
 	}

@@ -7,8 +7,9 @@ int main()
 	DWORD dwUserThreadID;
 
 	while (true) {
-		if (ClientAccept(sock)) {
-			HANDLE hThread = CreateThread(0, 0, ClientThread, (SOCKET*)sock, 0, &dwUserThreadID);
+		SOCKET client = ClientAccept(sock);
+		if ((bool)client) {
+			HANDLE hThread = CreateThread(0, 0, ClientThread, (SOCKET*)client, 0, &dwUserThreadID);
 		}
 		acceptCheck();
 	}

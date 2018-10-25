@@ -31,40 +31,76 @@ static int NonBlockingSocket(SOCKET sock, u_long uMode)
 	return iRet;
 }
 
+#define ACCEPTCHECK 0000
+#define CHAT_MSG    1000
+
+struct packHead
+{
+	WORD type;
+	WORD length;
+};
+
+struct packet
+{
+	packHead ph;
+	char buf[256];
+};
+
+int SendData(SOCKET sock, packet* pack)
+{
+	int iSendTotal = 0;
+	do {
+		int iSend = send(sock, (char*)pack, sizeof(packet) - iSendTotal, 0);
+		iSendTotal += iSend;
+	} while (iSendTotal < sizeof(packet));
+
+	return iSendTotal;
+}
+
+int RecvData(SOCKET client, char* retstr)
+{
+	char buf[256] = { 0, };
+	
+	int iRecvTotal = 0;
+	do {
+		int iRecv = recv(client, &buf[iRecvTotal], sizeof(packHead) - iRecvTotal, 0);
+		iRecvTotal += iRecv;
+	} while (iRecvTotal < sizeof(packHead));
+	if (iRecvTotal == 0 || iRecvTotal == SOCKET_ERROR) {
+		return iRecvTotal;
+	}
+
+	packHead* recvPH = (packHead*)buf;
+	switch (recvPH->type) {
+		case ACCEPTCHECK: {
+			return -2;
+		} break;
+		case CHAT_MSG: {
+			do {
+				int iRecv = recv(client, &buf[iRecvTotal], recvPH->length - iRecvTotal, 0);
+				iRecvTotal += iRecv;
+			} while (iRecvTotal < sizeof(recvPH->length));
+			memcpy(retstr, buf, recvPH->length);
+			return iRecvTotal;
+		} break;
+	}
+}
 
 SOCKET Init()
 {
 	int iRet;
 
-	SOCKET sock;
-
 	WSADATA wsd;
 	iRet = WSAStartup(MAKEWORD(2, 2), &wsd);
 	if (iRet != (int)NO_ERROR) {
-		ERR_EXIT(_T("윈속 초기화 실패"));
+		ERR_EXIT(L"윈속 초기화 실패");
 		return -1;
 	}
 
+	SOCKET sock;
 	sock = socket(AF_INET, SOCK_STREAM, 0);
-
-
-	SOCKADDR_IN sa_in;
-	ZeroMemory(&sa_in, sizeof(sa_in));
-	sa_in.sin_family = AF_INET;
-	sa_in.sin_addr.s_addr = htonl(INADDR_ANY);
-	sa_in.sin_port = htons(10000);
-
-	// 0) 통신 환경 정보를 갖는 소켓을 생성. 이후 이 소켓을 이용해 실제 접속한 클라이언트 소켓을 생성함. (대기 소켓이라는 뜻)
-	iRet = bind(sock, (sockaddr*)&sa_in, sizeof(sa_in));
-	if (iRet == SOCKET_ERROR) {
-		ERR_EXIT(_T("소켓에 통신 환경 바인딩 실패"));
-		return -1;
-	}
-
-	// 1)클라이언트가 접속할 때 까지 대기
-	iRet = listen(sock, SOMAXCONN);
-	if (iRet == SOCKET_ERROR) {
-		ERR_EXIT(_T("대기상태 설정 실패"));
+	if (sock == INVALID_SOCKET) {
+		ERR_EXIT(_T("소켓 생성 실패"));
 		return -1;
 	}
 
@@ -103,8 +139,28 @@ DWORD WINAPI SendThread(LPVOID arg)
 	char buf[256] = { 0, };
 	while (true) {
 		ZeroMemory(buf, sizeof(char) * 256);
+		fgets(buf, 256, stdin);
+		if (buf[strlen(buf) - 1] == '\n') {
+			buf[strlen(buf) - 1] = 0;
+		}
+		if (strlen(buf) == 0) { 
+			printf("종료합니다.\n");
+			break;
+		} // 엔터는 종료!
+		
+		packHead ph = { CHAT_MSG, strlen(buf) };
+		packet pack;
+		pack.ph = ph;
+		strcpy_s(pack.buf, buf);
 
+		int iSendByte = SendData(sock, &pack);
+		if (iSendByte == SOCKET_ERROR) { 
+			printf("서버가 닫혔습니다 \n");
+			break;
+		}
+		printf("%d 바이트를 전송하였습니다.", iSendByte);
 	}
+	return 0;
 }
 
 void Release(SOCKET sock)
