@@ -158,7 +158,7 @@ DWORD WINAPI SendThread(LPVOID arg)
 			printf("서버가 닫혔습니다 \n");
 			break;
 		}
-		printf("%d 바이트를 전송하였습니다.", iSendByte);
+		printf("전송 [%d] \n", iSendByte);
 	}
 	return 0;
 }

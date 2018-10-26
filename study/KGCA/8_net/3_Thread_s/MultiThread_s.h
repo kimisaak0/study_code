@@ -9,6 +9,26 @@
 
 std::list<SOCKET> g_userlist;
 
+#pragma pack (1)
+
+#define ACCEPTCHECK 0000
+#define CHAT_MSG    1000
+
+struct packHead
+{
+	WORD type;
+	WORD length;
+};
+
+struct packet
+{
+	packHead ph;
+	char buf[256];
+};
+
+#pragma pack (pop)
+
+
 static void ERR_EXIT(const TCHAR* msg)
 {
 	setlocale(LC_ALL, "KOREAN"); // 지역 설정.
@@ -32,29 +52,15 @@ static int NonBlockingSocket(SOCKET sock, u_long uMode)
 	return iRet;
 }
 
-#define ACCEPTCHECK 0000
-#define CHAT_MSG    1000
-
-struct packHead
-{
-	WORD type;
-	WORD length;
-};
-
-struct packet
-{
-	packHead ph;
-	char buf[256];
-};
 
 int SendData(SOCKET sock, packet* pack)
 {
 	int iSendTotal = 0;
 	if (pack->ph.type == ACCEPTCHECK) {
 		do {
-			int iSend = send(sock, (char*)pack, sizeof(packet) - iSendTotal, 0);
+			int iSend = send(sock, (char*)pack, sizeof(packHead) - iSendTotal, 0);
 			iSendTotal += iSend;
-		} while (iSendTotal < sizeof(packet));
+		} while (iSendTotal < sizeof(packHead));
 		return -2;
 	}
 
