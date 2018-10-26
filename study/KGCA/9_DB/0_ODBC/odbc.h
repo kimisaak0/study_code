@@ -93,30 +93,20 @@ void Select_2(const char* name)
 	wchar_t cSearchID[20] = { 0, };
 	_tcscpy_s(cSearchID, GetMtW(name));
 
+	int sRet = 0;
 	SQLCHAR cID[20] = { 0, };
 	SQLCHAR cPASS[20] = { 0, };
 	SQLLEN lID, lPASS;
 	
-	RETCODE ret1 = 0;
-	RETCODE ret2 = 0;
-
-	int sRet = 0;
-	SQLLEN cbRetParam = SQL_NTS;
-
 	TCHAR buffer[256] = { 0, };
 
 	SQLBindCol(g_hStmt, 1, SQL_C_CHAR, cID, sizeof(cID), &lID);
 	SQLBindCol(g_hStmt, 2, SQL_C_CHAR, cPASS, sizeof(cPASS), &lPASS);
 
-	//strcpy_s(cSearchID , L"한글");
-
-	//빡치면 저장 프로시저 안 써버릴거임.
-	
-	ret2 = SQLBindParameter(g_hStmt, 1, SQL_PARAM_OUTPUT, SQL_C_LONG, SQL_INTEGER, 20, 20, &sRet, 10, &cbRetParam);
-	ret1 = SQLBindParameter(g_hStmt, 2, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_VARCHAR, 20, 0, (SQLCHAR*)&cSearchID, 0, 0);
+	SQLBindParameter(g_hStmt, 1, SQL_PARAM_OUTPUT, SQL_C_LONG, SQL_INTEGER, 0, 0, &sRet, 0 , 0);
+	SQLBindParameter(g_hStmt, 2, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_VARCHAR, 20, 0, (SQLTCHAR*)&cSearchID, 0, 0);
 
 	wsprintf((LPTSTR)buffer, _T("{? = CALL usp_Select(?)}"));
-
 
 	if (SQLExecDirect(g_hStmt, (SQLTCHAR*)buffer, SQL_NTS) != SQL_SUCCESS) {
 		HandleDiagnosticRecord();
@@ -126,6 +116,12 @@ void Select_2(const char* name)
 	while (SQLFetch(g_hStmt) != SQL_NO_DATA) {
 		printf("ID : %s, PASS : %s  \n", cID, cPASS);
 	}
+
+	//이게 실행되어야지 결과값 확인이 가능함.
+	SQLMoreResults(g_hStmt);
+	// SQLMoreResults는 결과 세트을 리턴하는 저장된 프로시듀어와 연관된 명령문 핸들에서 사용할 수 있는 추가 정보가 더 있는지 판별합니다.
+	// 모든 결과 세트가 처리되었으면 SQLMoreResults()는 SQL_NO_DATA_FOUND를 리턴합니다.
+	// SQL_CLOSE 또는 SQL_DROP 옵션으로 SQLFreeStmt()를 호출하면 이 명령문 핸들 가운데 지연 중인 모든 집합이 삭제됩니다.
 
 	SQLCloseCursor(g_hStmt);
 }
