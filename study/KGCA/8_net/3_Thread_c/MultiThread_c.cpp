@@ -15,16 +15,16 @@ int main()
 	DWORD dwSTID = 0;
 	HANDLE hT = CreateThread(0, 0, SendThread, (LPVOID)sock, 0, &dwSTID);
 
-	char buf[256] = { 0, };
+	TCHAR buf[256] = { 0, };
 	while (true) {
 		ZeroMemory(buf, sizeof(char) * 256);
 		int iRecvByte = RecvData(sock, buf);
-		if (iRecvByte == 0 || iRecvByte == SOCKET_ERROR) {
+		if (iRecvByte == SOCKET_ERROR) {
 			printf("서버가 닫혔습니다.\n");
 			break;
 		}
 		else if (iRecvByte > 0) {
-			printf("받은 메시지 : %s", buf);
+			_tprintf(_T("echo : %s\n"), buf);
 		}
 	}
 

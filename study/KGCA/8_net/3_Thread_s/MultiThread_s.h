@@ -1,4 +1,5 @@
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
 
 #pragma once
 #pragma comment(lib, "ws2_32.lib")
@@ -8,26 +9,6 @@
 #include <list>
 
 std::list<SOCKET> g_userlist;
-
-#pragma pack (1)
-
-#define ACCEPTCHECK 0000
-#define CHAT_MSG    1000
-
-struct packHead
-{
-	WORD type;
-	WORD length;
-};
-
-struct packet
-{
-	packHead ph;
-	char buf[256];
-};
-
-#pragma pack (pop)
-
 
 static void ERR_EXIT(const TCHAR* msg)
 {
@@ -52,53 +33,88 @@ static int NonBlockingSocket(SOCKET sock, u_long uMode)
 	return iRet;
 }
 
+#define ACCEPTCHECK 0000
+#define CHAT_MSG    1000
+
+#pragma pack (push, 1)
+
+struct packHead
+{
+	WORD type;
+	WORD length;
+};
+
+struct packet
+{
+	packHead ph;
+	TCHAR buf[256];
+};
+
+#pragma pack (pop)
+
 
 int SendData(SOCKET sock, packet* pack)
 {
-	int iSendTotal = 0;
+	int iSendByte = 0;
+
+	int iTotalSize = pack->ph.length*2 + sizeof(packHead);
+
+	TCHAR* pMsg = (TCHAR*)pack;
+
 	if (pack->ph.type == ACCEPTCHECK) {
 		do {
-			int iSend = send(sock, (char*)pack, sizeof(packHead) - iSendTotal, 0);
-			iSendTotal += iSend;
-		} while (iSendTotal < sizeof(packHead));
+			int iSend = send(sock, (char*)&pMsg[iSendByte], iTotalSize - iSendByte, 0);
+			iSendByte += iSend;
+		} while (iSendByte < iTotalSize);
 		return -2;
 	}
+	if (pack->ph.type == CHAT_MSG) {
+		do {
+			int iSend = send(sock, (char*)&pMsg[iSendByte], iTotalSize - iSendByte, 0);
+			iSendByte += iSend;
+		} while (iSendByte < iTotalSize);
+	}
 
-	do {
-		int iSend = send(sock, (char*)pack, sizeof(packet) - iSendTotal, 0);
-		iSendTotal += iSend;
-	} while (iSendTotal < sizeof(packet));
-
-	return iSendTotal;
+	return iSendByte;
 }
 
-int RecvData(SOCKET client, char* retstr)
+int RecvData(SOCKET client, TCHAR* retstr)
 {
-	char buf[256] = { 0, };
+	packet pack;
+	ZeroMemory(&pack, sizeof(pack));
 
-	int iRecvTotal = 0;
+	TCHAR buf[256] = { 0, };
+	int iRecvByte = 0;
+	int iRecv = 0;
+
+	iRecv = recv(client, (char*)&buf[iRecvByte], sizeof(packHead) - iRecvByte, 0);
+	iRecvByte += iRecv;
+
+	if (iRecvByte == sizeof(packHead)) {
+		memcpy(&pack.ph, buf, sizeof(packHead));
+	}
+
+
+	TCHAR strBuf[256] = { 0, };
+
 	do {
-		int iRecv = recv(client, &buf[iRecvTotal], sizeof(packHead) - iRecvTotal, 0);
-		if (iRecv == 0 || iRecv == SOCKET_ERROR) {
-			return iRecv;
+		iRecv = recv(client, (char*)strBuf, pack.ph.length*2, 0);
+		if (iRecv == -1) {
+			return - 1;
 		}
-		iRecvTotal += iRecv;
-	} while (iRecvTotal < sizeof(packHead));
-
-	packHead* recvPH = (packHead*)buf;
-	switch (recvPH->type) {
+		iRecvByte += iRecv;
+	} while (iRecvByte < pack.ph.length*2);
+	
+	switch (pack.ph.type) {
 		case ACCEPTCHECK: {
 			return -2;
 		} break;
 		case CHAT_MSG: {
-			do {
-				int iRecv = recv(client, &buf[iRecvTotal], recvPH->length - iRecvTotal, 0);
-				iRecvTotal += iRecv;
-			} while (iRecvTotal < sizeof(recvPH->length));
-			memcpy(retstr, buf, recvPH->length);
-			return iRecvTotal;
+			memcpy(retstr, strBuf, pack.ph.length*2);
 		} break;
 	}
+
+	return iRecvByte;
 }
 
 SOCKET Init()
@@ -166,7 +182,7 @@ void acceptCheck()
 	for (iter = g_userlist.begin(); iter != g_userlist.end(); ) {
 		SOCKET client_temp = *iter;
 		packHead ph = { ACCEPTCHECK, 0 };
-		packet pack = { ph, "" };
+		packet pack = { ph, _T("") };
 		int iSendByte = SendData(client_temp, &pack);
 		if (iSendByte == SOCKET_ERROR) {
 			SOCKADDR_IN clientInfo;
@@ -191,19 +207,20 @@ DWORD WINAPI ClientThread(LPVOID arg)
 	int addrlen = sizeof(clientInfo);
 	getpeername(client, (sockaddr*)&clientInfo, &addrlen);
 
-	char recvBuf[256] = { 0, };
+	TCHAR recvBuf[256] = { 0, };
 	while (true) {
+		Sleep(1);
 		ZeroMemory(&recvBuf, sizeof(char) * 256);
-		int iRecvByte = RecvData(client, recvBuf);
-		if (iRecvByte > 0) {
-			printf("\n%s", recvBuf);
+		int iRecvResult = RecvData(client, recvBuf);
+		if (iRecvResult > 0) {
+			_tprintf(_T("%s\n"), recvBuf);
 			std::list<SOCKET>::iterator iter;
 			for (iter = g_userlist.begin(); iter != g_userlist.end(); iter++) {
 				SOCKET client_temp = *iter;
-				packHead ph = { CHAT_MSG, strlen(recvBuf) };
+				packHead ph = { CHAT_MSG, (WORD)_tcslen(recvBuf) };
 				packet pack;
 				pack.ph = ph;
-				strcpy_s(pack.buf, recvBuf);
+				_tcscpy_s(pack.buf, recvBuf);
 				SendData(client_temp, &pack);
 			}
 		}

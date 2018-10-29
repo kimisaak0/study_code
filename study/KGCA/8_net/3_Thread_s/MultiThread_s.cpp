@@ -7,11 +7,12 @@ int main()
 	DWORD dwUserThreadID;
 
 	while (true) {
+		//acceptCheck();
 		SOCKET client = ClientAccept(sock);
+		HANDLE hThread = 0;
 		if ((bool)client) {
-			HANDLE hThread = CreateThread(0, 0, ClientThread, (SOCKET*)client, 0, &dwUserThreadID);
+			hThread = CreateThread(0, 0, ClientThread, (SOCKET*)client, 0, &dwUserThreadID);
 		}
-		acceptCheck();
 	}
 
 	Release(sock);

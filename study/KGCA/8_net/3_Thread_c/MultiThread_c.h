@@ -34,6 +34,8 @@ static int NonBlockingSocket(SOCKET sock, u_long uMode)
 #define ACCEPTCHECK 0000
 #define CHAT_MSG    1000
 
+#pragma pack (push, 1)
+
 struct packHead
 {
 	WORD type;
@@ -43,47 +45,74 @@ struct packHead
 struct packet
 {
 	packHead ph;
-	char buf[256];
+	TCHAR buf[256];
 };
+
+
+#pragma pack (pop)
 
 int SendData(SOCKET sock, packet* pack)
 {
-	int iSendTotal = 0;
-	do {
-		int iSend = send(sock, (char*)pack, sizeof(packet) - iSendTotal, 0);
-		iSendTotal += iSend;
-	} while (iSendTotal < sizeof(packet));
+	int iSendByte = 0;
 
-	return iSendTotal;
-}
+	int iTotalSize = pack->ph.length*2 + sizeof(packHead);
 
-int RecvData(SOCKET client, char* retstr)
-{
-	char buf[256] = { 0, };
-	
-	int iRecvTotal = 0;
-	do {
-		int iRecv = recv(client, &buf[iRecvTotal], sizeof(packHead) - iRecvTotal, 0);
-		iRecvTotal += iRecv;
-	} while (iRecvTotal < sizeof(packHead));
-	if (iRecvTotal == 0 || iRecvTotal == SOCKET_ERROR) {
-		return iRecvTotal;
+	TCHAR* pMsg = (TCHAR*)pack;
+
+	if (pack->ph.type == ACCEPTCHECK) {
+		do {
+			int iSend = send(sock, (char*)&pMsg[iSendByte], iTotalSize - iSendByte, 0);
+			iSendByte += iSend;
+		} while (iSendByte < iTotalSize);
+		return -2;
+	}
+	if (pack->ph.type == CHAT_MSG) {
+		do {
+			int iSend = send(sock, (char*)&pMsg[iSendByte], iTotalSize - iSendByte, 0);
+			iSendByte += iSend;
+		} while (iSendByte < iTotalSize);
 	}
 
-	packHead* recvPH = (packHead*)buf;
-	switch (recvPH->type) {
+	return iSendByte;
+}
+
+int RecvData(SOCKET client, TCHAR* retstr)
+{
+	packet pack;
+	ZeroMemory(&pack, sizeof(pack));
+
+	TCHAR buf[256] = { 0, };
+	int iRecvByte = 0;
+	int iRecv = 0;
+
+	iRecv = recv(client, (char*)&buf[iRecvByte], sizeof(packHead) - iRecvByte, 0);
+	iRecvByte += iRecv;
+
+	if (iRecvByte == sizeof(packHead)) {
+		memcpy(&pack.ph, buf, sizeof(packHead));
+	}
+
+
+	TCHAR strBuf[256] = { 0, };
+
+	do {
+		iRecv = recv(client, (char*)strBuf, pack.ph.length * 2, 0);
+		if (iRecv == -1) {
+			return -1;
+		}
+		iRecvByte += iRecv;
+	} while (iRecvByte < pack.ph.length * 2);
+
+	switch (pack.ph.type) {
 		case ACCEPTCHECK: {
 			return -2;
 		} break;
 		case CHAT_MSG: {
-			do {
-				int iRecv = recv(client, &buf[iRecvTotal], recvPH->length - iRecvTotal, 0);
-				iRecvTotal += iRecv;
-			} while (iRecvTotal < sizeof(recvPH->length));
-			memcpy(retstr, buf, recvPH->length);
-			return iRecvTotal;
+			memcpy(retstr, strBuf, pack.ph.length * 2);
 		} break;
 	}
+
+	return iRecvByte;
 }
 
 SOCKET Init()
@@ -93,7 +122,7 @@ SOCKET Init()
 	WSADATA wsd;
 	iRet = WSAStartup(MAKEWORD(2, 2), &wsd);
 	if (iRet != (int)NO_ERROR) {
-		ERR_EXIT(L"윈속 초기화 실패");
+		ERR_EXIT(_T("윈속 초기화 실패"));
 		return -1;
 	}
 
@@ -136,29 +165,29 @@ bool IPConnect(SOCKET sock)
 DWORD WINAPI SendThread(LPVOID arg) 
 {
 	SOCKET sock = (SOCKET)arg;
-	char buf[256] = { 0, };
+	TCHAR buf[256] = { 0, };
 	while (true) {
 		ZeroMemory(buf, sizeof(char) * 256);
-		fgets(buf, 256, stdin);
-		if (buf[strlen(buf) - 1] == '\n') {
-			buf[strlen(buf) - 1] = 0;
+		_fgetts(buf, 256, stdin);
+		if (buf[_tcslen(buf) - 1] == '\n') {
+			buf[_tcslen(buf) - 1] = 0;
 		}
-		if (strlen(buf) == 0) { 
+		if (_tcslen(buf) == 0) {
 			printf("종료합니다.\n");
 			break;
 		} // 엔터는 종료!
 		
-		packHead ph = { CHAT_MSG, strlen(buf) };
+		packHead ph = { CHAT_MSG, (WORD)_tcslen(buf) };
 		packet pack;
 		pack.ph = ph;
-		strcpy_s(pack.buf, buf);
+		_tcscpy_s(pack.buf, buf);
 
 		int iSendByte = SendData(sock, &pack);
 		if (iSendByte == SOCKET_ERROR) { 
 			printf("서버가 닫혔습니다 \n");
 			break;
 		}
-		printf("전송 [%d] \n", iSendByte);
+		//printf("전송 [%d] \n", iSendByte);
 	}
 	return 0;
 }

@@ -20,8 +20,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{129871ED-FD7F-4349-B31E-5F9F18BC8CE2}</ProjectGuid>
-    <RootNamespace>My3aThreadExample</RootNamespace>
+    <ProjectGuid>{F9A6D1D8-765C-473B-8C12-6E7EA98BE8CD}</ProjectGuid>
+    <RootNamespace>My4aSyncroExampleCriticalSection</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -70,8 +70,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>../../../../../z_End/Net/3ex_a/</OutDir>
-    <IntDir>../../../../../z_Mid/Net/3ex_a/</IntDir>
+    <OutDir>../../../../../z_End/Net/4ex_a/</OutDir>
+    <IntDir>../../../../../z_Mid/Net/4ex_a/</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -118,7 +118,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Sample.cpp" />
+    <ClCompile Include="CS_sample.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
