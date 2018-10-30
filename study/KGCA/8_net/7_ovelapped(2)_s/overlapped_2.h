@@ -21,9 +21,10 @@ struct SOCKETINFO
 //std::list<SOCKET> g_userlist;
 
 int g_iTotalSockets = 0;
-SOCKETINFO* SIArr[WSA_MAXIMUM_WAIT_EVENTS];
-WSAEVENT EventArr[WSA_MAXIMUM_WAIT_EVENTS];
-CRITICAL_SECTION cs;
+SOCKETINFO** SIArr;
+
+HANDLE hREvent, hWEvent;
+
 
 static void ERR_EXIT(const TCHAR* msg)
 {
@@ -107,13 +108,12 @@ SOCKET ClientAccept(SOCKET sock)
 
 bool AddSI(SOCKET sock)
 {
-	EnterCriticalSection(&cs);
-
-	if (g_iTotalSockets >= WSA_MAXIMUM_WAIT_EVENTS) {
-		std::cout << _T("[오류] g_iTotalSockets >= WSA_MAXIMUM_WAIT_EVENTS \n");
-		return false;
-	}
-
+	//접속한 클라이언트 정보 출력
+	ClientAccept(sock);
+	SOCKADDR_IN addr;
+	int addrlen = sizeof(addr);
+	getpeername(sock, (SOCKADDR*)&addr, &addrlen);
+	printf("클라이언트 접속 [ip:%s]\n", inet_ntoa(addr.sin_addr));
 
 	SOCKETINFO* pSI = new SOCKETINFO;
 	if (pSI == nullptr) {
@@ -121,14 +121,7 @@ bool AddSI(SOCKET sock)
 		return false;
 	}
 
-	WSAEVENT hEvent = WSACreateEvent();
-	if (hEvent == WSA_INVALID_EVENT) {
-		std::cout << _T("[오류] hEvent == WSA_INVALID_EVENT \n");
-		return false;
-	}
-
 	ZeroMemory(&pSI->overlapped, sizeof(pSI->overlapped));
-	pSI->overlapped.hEvent = hEvent;
 	pSI->sock = sock;
 	pSI->iRecvByte = 0;
 	pSI->iSendByte = 0;
@@ -136,18 +129,12 @@ bool AddSI(SOCKET sock)
 	pSI->wsabuf.len = 256;
 	//ZeroMemory(pSI->buf, sizeof(char) * 256);
 	SIArr[g_iTotalSockets] = pSI;
-	EventArr[g_iTotalSockets] = hEvent;
-	g_iTotalSockets++;
-
-	LeaveCriticalSection(&cs);
 
 	return true;
 }
 
 void RemoveSI(int index)
 {
-	EnterCriticalSection(&cs);
-
 	SOCKETINFO* pSI = SIArr[index];
 
 	SOCKADDR_IN addr;
@@ -157,90 +144,58 @@ void RemoveSI(int index)
 
 	closesocket(pSI->sock);
 	delete pSI;
-	WSACloseEvent(EventArr[index]);
 
 	if (index != (g_iTotalSockets - 1)) {
 		SIArr[index] = SIArr[g_iTotalSockets - 1];
-		EventArr[index] = EventArr[g_iTotalSockets - 1];
 	}
-
+	
 	g_iTotalSockets--;
 
-	LeaveCriticalSection(&cs);
 }
 
-DWORD WINAPI WorkerThread(LPVOID arg)
+void CALLBACK CR(DWORD dwErr, DWORD cbTransferred, LPWSAOVERLAPPED lpOverlapped, DWORD dwFlags)
 {
 	int iRet;
 
-	while (true) {
-		//이벤트 객체 관찰
-		DWORD index = WSAWaitForMultipleEvents(g_iTotalSockets, EventArr, FALSE, WSA_INFINITE, FALSE);
-		if (index == WSA_WAIT_FAILED) {
-			continue;
+	DWORD recvbytes, flags = 0;
+
+	SOCKETINFO *ptr = (SOCKETINFO*)lpOverlapped;
+	SOCKADDR_IN addr;
+	int addrlen = sizeof(addr);
+	getpeername(ptr->sock, (SOCKADDR*)&addr, &addrlen);
+
+	//비동기 입출력 결과 확인
+	if (dwErr != 0 || cbTransferred == 0) {
+		if (dwErr != 0) {
+			ERR_EXIT(_T("Error"));
 		}
-		index -= WSA_WAIT_EVENT_0;
-		WSAResetEvent(EventArr[index]);
-		if (index == 0) {
-			continue;
-		}
+		closesocket(ptr->sock);
+		printf("접속 종료 [%s]", inet_ntoa(addr.sin_addr));
+		delete ptr;
+		return;
+	}
 
-		SOCKETINFO* ptr = SIArr[index];
+	//데이터 전송량 갱신
+	if (ptr->iRecvByte == 0) {
+		ptr->iRecvByte = cbTransferred;
+		ptr->iSendByte = 0;
+		//받은 데이터 출력
+		ptr->buf[ptr->iRecvByte] = '\0';
+		printf("[%s] %s\n", inet_ntoa(addr.sin_addr), ptr->buf);
+	}
+	else {
+		ptr->iSendByte += cbTransferred;
+	}
 
-		//클라이언트 정보 얻기
-		SOCKADDR_IN addr;
-		int addrlen = sizeof(addr);
-		getpeername(ptr->sock, (SOCKADDR*)&addr, &addrlen);
-		
-		//비동기 입출력 결과 확인
-		DWORD cbTransferred, flags;
-		iRet = WSAGetOverlappedResult(ptr->sock, &ptr->overlapped, &cbTransferred, FALSE, &flags);
-		if (iRet == FALSE || cbTransferred == 0) {
-			RemoveSI(index);
-			continue;
-		}
+	if (ptr->iRecvByte > ptr->iSendByte) {
+		//데이터 보내기
+		ZeroMemory(&ptr->overlapped, sizeof(ptr->overlapped));
+		ptr->wsabuf.buf = ptr->buf + ptr->iSendByte;
+		ptr->wsabuf.len = ptr->iRecvByte - ptr->iSendByte;
 
-		//데이터 전송량 갱신
-		if (ptr->iRecvByte == 0) {
-			ptr->iRecvByte = cbTransferred;
-			ptr->iSendByte = 0;
-			//받은 데이터 출력
-			ptr->buf[ptr->iRecvByte] = '\0';
-			printf("[%s] %s\n", inet_ntoa(addr.sin_addr), ptr->buf);
-		}
-		else {
-			ptr->iSendByte += cbTransferred;
-		}
-
-		if (ptr->iRecvByte > ptr->iSendByte) {
-			//데이터 보내기
-			ZeroMemory(&ptr->overlapped, sizeof(ptr->overlapped));
-			ptr->overlapped.hEvent = EventArr[index];
-			ptr->wsabuf.buf = ptr->buf + ptr->iSendByte;
-			ptr->wsabuf.len = ptr->iRecvByte - ptr->iSendByte;
-
-			for (int i = 1; i < g_iTotalSockets; i++) {
-				DWORD sendbyte;
-				iRet = WSASend(SIArr[i]->sock, &ptr->wsabuf, 1, &sendbyte, flags, &ptr->overlapped, NULL);
-				if (iRet == SOCKET_ERROR) {
-					if (WSAGetLastError() != WSA_IO_PENDING) {
-						ERR_EXIT(_T("WSASend"));
-					}
-					continue;
-				}
-			}
-		}
-		else {
-			ptr->iRecvByte = 0;
-			//데이터 받기
-			ZeroMemory(&ptr->overlapped, sizeof(ptr->overlapped));
-			ptr->overlapped.hEvent = EventArr[index];
-			ptr->wsabuf.buf = ptr->buf;
-			ptr->wsabuf.len = 256;
-
-			DWORD recvbytes;
-
-			iRet = WSARecv(ptr->sock, &ptr->wsabuf, 1, &recvbytes, &flags, &ptr->overlapped, NULL);
+		for (int i = 1; i < g_iTotalSockets; i++) {
+			DWORD sendbyte;
+			iRet = WSASend(SIArr[i]->sock, &ptr->wsabuf, 1, &sendbyte, flags, &ptr->overlapped, CR);
 			if (iRet == SOCKET_ERROR) {
 				if (WSAGetLastError() != WSA_IO_PENDING) {
 					ERR_EXIT(_T("WSASend"));
@@ -249,6 +204,60 @@ DWORD WINAPI WorkerThread(LPVOID arg)
 			}
 		}
 	}
+	else {
+		ptr->iRecvByte = 0;
+		//데이터 받기
+		ZeroMemory(&ptr->overlapped, sizeof(ptr->overlapped));
+		ptr->wsabuf.buf = ptr->buf;
+		ptr->wsabuf.len = 256;
+
+
+
+		iRet = WSARecv(ptr->sock, &ptr->wsabuf, 1, &recvbytes, &flags, &ptr->overlapped, CR);
+		if (iRet == SOCKET_ERROR) {
+			if (WSAGetLastError() != WSA_IO_PENDING) {
+				ERR_EXIT(_T("WSASend"));
+			return;
+			}
+		}
+	}
+}
+
+DWORD WINAPI WorkerThread(LPVOID arg)
+{
+	int iRet;
+
+	SOCKET sock = (SOCKET)arg;
+
+	while (true) {
+		while (true) {
+			//alertable wait
+			DWORD result = WaitForSingleObjectEx(hWEvent, INFINITE, TRUE);
+			if (result == WAIT_OBJECT_0) {
+				if (sock != 0) {
+					//새로운 클라이언트가 접속한 경우
+					AddSI(sock);
+					break;
+				}
+			}
+			if (result == WAIT_IO_COMPLETION) {
+				continue;
+			}
+		}
+
+		DWORD recvByte, flags = 0;
+		
+		//비동기 입출력 시작
+		iRet = WSARecv(SIArr[g_iTotalSockets]->sock, &SIArr[g_iTotalSockets]->wsabuf, 1, &recvByte, &flags, &SIArr[g_iTotalSockets]->overlapped, CR);
+		if (iRet == SOCKET_ERROR) {
+			if (WSAGetLastError() != WSA_IO_PENDING) {
+				ERR_EXIT(_T("WSARecv"));
+				return -1;
+			}
+		}
+	
+	}
+	return 0;
 }
 
 
