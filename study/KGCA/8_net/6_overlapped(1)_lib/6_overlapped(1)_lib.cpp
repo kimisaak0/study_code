@@ -1,37 +1,4 @@
-#define _WINSOCK_DEPRECATED_NO_WARNINGS
-#define _CRT_SECURE_NO_WARNINGS
-
-#pragma once
-#pragma comment(lib, "ws2_32.lib")
-#include <WinSock2.h>
-#include <iostream>
-#include <tchar.h>
-
-#pragma pack (push, 1)
-
-struct packHead
-{
-	TCHAR name[30];
-	WORD length;
-};
-
-struct packet
-{
-	packHead ph;
-	TCHAR buf[256];
-};
-
-#pragma pack (pop)
-
-struct SOCKETINFO
-{
-	WSAOVERLAPPED overlapped;
-	SOCKET sock;
-	packet pack;
-	int iRecvByte;
-	int iSendByte;
-	WSABUF wsabuf;
-};
+#include "6_overlapped(1)_lib.h"
 
 int g_iTotalSockets = 0;
 SOCKETINFO* SIArr[WSA_MAXIMUM_WAIT_EVENTS];
@@ -107,54 +74,6 @@ SOCKET ClientAccept(SOCKET sock)
 	}
 }
 
-int SendData(SOCKET sock, packet* pack)
-{
-	int iSendByte = 0;
-
-	int iTotalSize = pack->ph.length * 2 + sizeof(packHead);
-
-	TCHAR* pMsg = (TCHAR*)pack;
-
-	do {
-		int iSend = send(sock, (char*)&pMsg[iSendByte], iTotalSize - iSendByte, 0);
-		iSendByte += iSend;
-	} while (iSendByte < iTotalSize);
-	
-	return iSendByte;
-}
-
-int RecvData(SOCKET client, TCHAR* retstr)
-{
-	packet pack;
-	ZeroMemory(&pack, sizeof(pack));
-
-	TCHAR buf[256] = { 0, };
-	int iRecvByte = 0;
-	int iRecv = 0;
-
-	iRecv = recv(client, (char*)&buf[iRecvByte], sizeof(packHead) - iRecvByte, 0);
-	iRecvByte += iRecv;
-
-	if (iRecvByte == sizeof(packHead)) {
-		memcpy(&pack.ph, buf, sizeof(packHead));
-	}
-	
-	TCHAR strBuf[256] = { 0, };
-
-	do {
-		iRecv = recv(client, (char*)strBuf, pack.ph.length * 2, 0);
-		if (iRecv == -1) {
-			return -1;
-		}
-		iRecvByte += iRecv;
-	} while (iRecvByte < pack.ph.length * 2);
-
-	_tcscpy_s(retstr, _tcslen(pack.ph.name), pack.ph.name);
-	_tcscat_s(retstr, _tcslen(pack.buf), pack.buf);
-
-	return iRecvByte + sizeof(packHead);
-}
-
 bool AddSI(SOCKET sock)
 {
 	EnterCriticalSection(&cs);
@@ -182,7 +101,7 @@ bool AddSI(SOCKET sock)
 	pSI->sock = sock;
 	pSI->iRecvByte = 0;
 	pSI->iSendByte = 0;
-	pSI->wsabuf.buf = pSI->pack.buf;
+	pSI->wsabuf.buf = pSI->buf;
 	pSI->wsabuf.len = 256;
 	//ZeroMemory(pSI->buf, sizeof(char) * 256);
 	SIArr[g_iTotalSockets] = pSI;
@@ -241,7 +160,7 @@ DWORD WINAPI WorkerThread(LPVOID arg)
 		SOCKADDR_IN addr;
 		int addrlen = sizeof(addr);
 		getpeername(ptr->sock, (SOCKADDR*)&addr, &addrlen);
-		
+
 		//비동기 입출력 결과 확인
 		DWORD cbTransferred, flags;
 		iRet = WSAGetOverlappedResult(ptr->sock, &ptr->overlapped, &cbTransferred, FALSE, &flags);
