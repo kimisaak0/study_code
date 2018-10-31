@@ -20,9 +20,7 @@ struct SOCKETINFO
 
 //std::list<SOCKET> g_userlist;
 
-int g_iTotalSockets = 0;
-SOCKETINFO** SIArr;
-
+SOCKET client;
 HANDLE hREvent, hWEvent;
 
 
@@ -88,76 +86,74 @@ SOCKET Init()
 //}
 
 
-SOCKET ClientAccept(SOCKET sock)
-{
-	SOCKADDR_IN client_addr;
-	int addrlen = sizeof(client_addr);
+//SOCKET ClientAccept(SOCKET sock)
+//{
+//	SOCKADDR_IN client_addr;
+//	int addrlen = sizeof(client_addr);
+//
+//	SOCKET client = 0;
+//	client = accept(sock, (SOCKADDR*)&client_addr, &addrlen);  //클라이언트 정보를 새로운 소켓을 만들어서 저장. (연결처리)
+//	if ((int)client != SOCKET_ERROR) {
+//		printf("클라이언트 접속 [ip:%s]\n", inet_ntoa(client_addr.sin_addr));
+//		//g_userlist.push_back(client);
+//		return client;
+//	}
+//	else if (client == INVALID_SOCKET) {
+//		ERR_EXIT(_T("Accept Error"));
+//		return false;
+//	}
+//}
 
-	SOCKET client = 0;
-	client = accept(sock, (SOCKADDR*)&client_addr, &addrlen);  //클라이언트 정보를 새로운 소켓을 만들어서 저장. (연결처리)
-	if ((int)client != SOCKET_ERROR) {
-		printf("클라이언트 접속 [ip:%s]\n", inet_ntoa(client_addr.sin_addr));
-		//g_userlist.push_back(client);
-		return client;
-	}
-	else if (client == INVALID_SOCKET) {
-		ERR_EXIT(_T("Accept Error"));
-		return false;
-	}
-}
-
-bool AddSI(SOCKET sock)
-{
-	//접속한 클라이언트 정보 출력
-	ClientAccept(sock);
-	SOCKADDR_IN addr;
-	int addrlen = sizeof(addr);
-	getpeername(sock, (SOCKADDR*)&addr, &addrlen);
-	printf("클라이언트 접속 [ip:%s]\n", inet_ntoa(addr.sin_addr));
-
-	SOCKETINFO* pSI = new SOCKETINFO;
-	if (pSI == nullptr) {
-		std::cout << _T("[오류] 메모리가 부족합니다. \n");
-		return false;
-	}
-
-	ZeroMemory(&pSI->overlapped, sizeof(pSI->overlapped));
-	pSI->sock = sock;
-	pSI->iRecvByte = 0;
-	pSI->iSendByte = 0;
-	pSI->wsabuf.buf = pSI->buf;
-	pSI->wsabuf.len = 256;
-	//ZeroMemory(pSI->buf, sizeof(char) * 256);
-	SIArr[g_iTotalSockets] = pSI;
-
-	return true;
-}
-
-void RemoveSI(int index)
-{
-	SOCKETINFO* pSI = SIArr[index];
-
-	SOCKADDR_IN addr;
-	int addrlen = sizeof(addr);
-	getpeername(pSI->sock, (SOCKADDR*)&addr, &addrlen);
-	printf("접속 종료 [%s]\n", inet_ntoa(addr.sin_addr));
-
-	closesocket(pSI->sock);
-	delete pSI;
-
-	if (index != (g_iTotalSockets - 1)) {
-		SIArr[index] = SIArr[g_iTotalSockets - 1];
-	}
-	
-	g_iTotalSockets--;
-
-}
+//bool AddSI(SOCKET sock)
+//{
+//	//접속한 클라이언트 정보 출력
+//	ClientAccept(sock);
+//	SOCKADDR_IN addr;
+//	int addrlen = sizeof(addr);
+//	getpeername(sock, (SOCKADDR*)&addr, &addrlen);
+//	printf("클라이언트 접속 [ip:%s]\n", inet_ntoa(addr.sin_addr));
+//
+//	SOCKETINFO* pSI = new SOCKETINFO;
+//	if (pSI == nullptr) {
+//		std::cout << _T("[오류] 메모리가 부족합니다. \n");
+//		return false;
+//	}
+//
+//	ZeroMemory(&pSI->overlapped, sizeof(pSI->overlapped));
+//	pSI->sock = sock;
+//	pSI->iRecvByte = 0;
+//	pSI->iSendByte = 0;
+//	pSI->wsabuf.buf = pSI->buf;
+//	pSI->wsabuf.len = 256;
+//	//ZeroMemory(pSI->buf, sizeof(char) * 256);
+//	SIArr[g_iTotalSockets] = pSI;
+//
+//	return true;
+//}
+//
+//void RemoveSI(int index)
+//{
+//	SOCKETINFO* pSI = SIArr[index];
+//
+//	SOCKADDR_IN addr;
+//	int addrlen = sizeof(addr);
+//	getpeername(pSI->sock, (SOCKADDR*)&addr, &addrlen);
+//	printf("접속 종료 [%s]\n", inet_ntoa(addr.sin_addr));
+//
+//	closesocket(pSI->sock);
+//	delete pSI;
+//
+//	if (index != (g_iTotalSockets - 1)) {
+//		SIArr[index] = SIArr[g_iTotalSockets - 1];
+//	}
+//	
+//	g_iTotalSockets--;
+//
+//}
 
 void CALLBACK CR(DWORD dwErr, DWORD cbTransferred, LPWSAOVERLAPPED lpOverlapped, DWORD dwFlags)
 {
 	int iRet;
-
-	DWORD recvbytes, flags = 0;
 
 	SOCKETINFO *ptr = (SOCKETINFO*)lpOverlapped;
 	SOCKADDR_IN addr;
@@ -193,16 +189,16 @@ void CALLBACK CR(DWORD dwErr, DWORD cbTransferred, LPWSAOVERLAPPED lpOverlapped,
 		ptr->wsabuf.buf = ptr->buf + ptr->iSendByte;
 		ptr->wsabuf.len = ptr->iRecvByte - ptr->iSendByte;
 
-		for (int i = 1; i < g_iTotalSockets; i++) {
+		/*for (int i = 1; i < g_iTotalSockets; i++) {*/
 			DWORD sendbyte;
-			iRet = WSASend(SIArr[i]->sock, &ptr->wsabuf, 1, &sendbyte, flags, &ptr->overlapped, CR);
+			iRet = WSASend(ptr->sock, &ptr->wsabuf, 1, &sendbyte, 0, &ptr->overlapped, CR);
 			if (iRet == SOCKET_ERROR) {
 				if (WSAGetLastError() != WSA_IO_PENDING) {
 					ERR_EXIT(_T("WSASend"));
+					return;
 				}
-				continue;
 			}
-		}
+		//}
 	}
 	else {
 		ptr->iRecvByte = 0;
@@ -212,7 +208,7 @@ void CALLBACK CR(DWORD dwErr, DWORD cbTransferred, LPWSAOVERLAPPED lpOverlapped,
 		ptr->wsabuf.len = 256;
 
 
-
+		DWORD recvbytes, flags = 0;
 		iRet = WSARecv(ptr->sock, &ptr->wsabuf, 1, &recvbytes, &flags, &ptr->overlapped, CR);
 		if (iRet == SOCKET_ERROR) {
 			if (WSAGetLastError() != WSA_IO_PENDING) {
@@ -227,28 +223,51 @@ DWORD WINAPI WorkerThread(LPVOID arg)
 {
 	int iRet;
 
-	SOCKET sock = (SOCKET)arg;
+	//SOCKET sock = (SOCKET)arg;
+
+	//Sleep(1);
 
 	while (true) {
 		while (true) {
 			//alertable wait
 			DWORD result = WaitForSingleObjectEx(hWEvent, INFINITE, TRUE);
 			if (result == WAIT_OBJECT_0) {
-				if (sock != 0) {
-					//새로운 클라이언트가 접속한 경우
-					AddSI(sock);
-					break;
-				}
+				//새로운 클라이언트가 접속한 경우
+				//AddSI(sock);
+				break;
 			}
-			if (result == WAIT_IO_COMPLETION) {
-				continue;
+			if (result != WAIT_IO_COMPLETION) {
+				return -1;
 			}
 		}
+
+		//접속한 클라이언트 정보 출력
+		//ClientAccept(sock);
+		SOCKADDR_IN addr;
+		int addrlen = sizeof(addr);
+		getpeername(client, (SOCKADDR*)&addr, &addrlen);
+		printf("클라이언트 접속 [ip:%s]\n", inet_ntoa(addr.sin_addr));
+
+		SOCKETINFO* pSI = new SOCKETINFO;
+		if (pSI == nullptr) {
+			std::cout << _T("[오류] 메모리가 부족합니다. \n");
+			return false;
+		}
+
+		SetEvent(hREvent);
+		ZeroMemory(&pSI->overlapped, sizeof(pSI->overlapped));
+		pSI->sock = client;
+		pSI->iRecvByte = 0;
+		pSI->iSendByte = 0;
+		pSI->wsabuf.buf = pSI->buf;
+		pSI->wsabuf.len = 256;
+		//ZeroMemory(pSI->buf, sizeof(char) * 256);
+		//SIArr[g_iTotalSockets] = pSI;
 
 		DWORD recvByte, flags = 0;
 		
 		//비동기 입출력 시작
-		iRet = WSARecv(SIArr[g_iTotalSockets]->sock, &SIArr[g_iTotalSockets]->wsabuf, 1, &recvByte, &flags, &SIArr[g_iTotalSockets]->overlapped, CR);
+		iRet = WSARecv(pSI->sock, &pSI->wsabuf, 1, &recvByte, &flags, &pSI->overlapped, CR);
 		if (iRet == SOCKET_ERROR) {
 			if (WSAGetLastError() != WSA_IO_PENDING) {
 				ERR_EXIT(_T("WSARecv"));
