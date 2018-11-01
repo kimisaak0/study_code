@@ -80,8 +80,8 @@
     <IntDir>../../../../ouput/kgca/cpp/5/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>../../../../../z_End/Cpp/k5/</OutDir>
-    <IntDir>../../../../../z_Mid/Cpp/k5/</IntDir>
+    <OutDir>../../../../z_End/Cpp/k5/</OutDir>
+    <IntDir>../../../../z_Mid/Cpp/k5/</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>

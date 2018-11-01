@@ -70,8 +70,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>../../../../../z_End/Cpp/kC/</OutDir>
-    <IntDir>../../../../../z_Mid/Cpp/kC/</IntDir>
+    <OutDir>../../../../z_End/Cpp/kC/</OutDir>
+    <IntDir>../../../../z_Mid/Cpp/kC/</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>

@@ -4,16 +4,14 @@
 
 int main()
 {
-	LinearList<int> a(2);
+	LinearList<int> a;
 
-	a.insert(1);
-	a.insert(2);
-	a.insert(3);
-	a.insert(4);
-	std::cout << a[0] << std::endl;
-	std::cout << a[1] << std::endl;
-	std::cout << a[2] << std::endl;
-	std::cout << a[3] << std::endl;
+	for (int i = 0; i < 4; i++) {
+		a.addData(i);
+	}
 
+	for (int i = 0; i < a.GetEnd(); i++) {
+		std::cout << a.next() << std::endl;
+	}
 
 }
