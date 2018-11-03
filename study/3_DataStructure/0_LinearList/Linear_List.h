@@ -1,6 +1,5 @@
 #pragma once
 #include <assert.h>
-#include <vector>
 
 template <typename T>
 class LinearList
@@ -10,33 +9,35 @@ class LinearList
 	int iEnd;
 	int nowIndex;
 
-	//std::vector<int> vi;
-
 private:
+	//할당받은 메모리가 부족할 때 메모리를 더 할당받고 데이터를 그대로 복사.
 	void moveData();
-	
 
 public:
-	//인덱스로 접근, 수정이 가능.
-	T& operator[](int index);
-
+	//get method
 	int GetSize();
 	int GetIndex();
 	int GetEnd();
 
-	int addData(T data);
+	//set method
+	void SetIndex(int index);
 
-	int InsertData(int index, T data);
+	T& operator[](int index);             //인덱스로 접근, 수정이 가능.
 
+	int addData(T data);                  //뒤에 데이터 추가
+	int InsertData(int index, T data);    //중간에 데이터 삽입
+
+	int DeleteData(int index);            //인덱스로 데이터 삭제
+	int DeleteValue(T data);              //데이터 값으로 데이터 삭제.
+
+    //순회용.
 	T& prev();
 	T& now();
 	T& next();
 
-	
 
 public:
 	LinearList();
-	LinearList(int size);
 	~LinearList();
 };
 
@@ -50,7 +51,7 @@ void LinearList<T>::moveData()
 			backup[i] = arr[i];
 		}
 		arr = new T[iSize + 5];
-		for (int i = 0; i < iSize; i++) {
+		for (int i = 0; i < iEnd - 1; i++) {
 			arr[i] = backup[i];
 		}
 		iSize = iSize + 5;
@@ -67,20 +68,11 @@ LinearList<T>::LinearList()
 	nowIndex = 0;
 }
 
-template <typename T>
-LinearList<T>::LinearList(int size)
-{
-	arr = new T[size];
-	iSize = size;
-	iEnd = size;
-	nowIndex = 0;
-}
-
 //[] 오버로딩
 template <typename T>
 T& LinearList<T>::operator[](int index)
 {
-	assert(0 <= index);
+	assert(0 <= index && index < iEnd);
 	return arr[index];
 }
 
@@ -103,6 +95,13 @@ int  LinearList<T>::GetEnd()
 	return iEnd;
 }
 
+//setMethod
+template <typename T>
+void  LinearList<T>::SetIndex(int index)
+{
+	nowIndex = index;
+}
+
 //뒤에 추가
 template <typename T>
 int LinearList<T>::addData(T data)
@@ -121,14 +120,42 @@ int LinearList<T>::InsertData(int index, T data)
 	iEnd++;
 	moveData();
 	for (int i = iEnd; i > index; i--) {
-		arr[iEnd] = arr[iENd-1]
+		arr[i] = arr[i - 1];
 	}
 
 	arr[index] = data;
-	
+
 	return iEnd;
 }
 
+//index로 삭제
+template <typename T>
+int LinearList<T>::DeleteData(int index)
+{
+	iEnd--;
+	for (int i = index; i < iEnd; i++) {
+		arr[i] = arr[i + 1];
+	}
+
+	arr[iEnd] = 0;
+
+	return iEnd;
+}
+
+//값으로 삭제
+template <typename T>
+int LinearList<T>::DeleteValue(T data)
+{
+	for (int i = 0; i < iEnd; ) {
+		if (arr[i] == data) {
+			DeleteData(i);
+			i = 0;
+			continue;
+		}
+		i++;
+	}
+	return iEnd;
+}
 
 //순회용.
 template <typename T>
@@ -137,6 +164,7 @@ T& LinearList<T>::prev()
 	if (nowIndex > 0) {
 		return arr[--nowIndex];
 	}
+	return arr[0];
 }
 
 
@@ -153,12 +181,13 @@ T& LinearList<T>::next()
 	if (nowIndex < iEnd) {
 		return arr[nowIndex++];
 	}
+	return arr[iEnd - 1];
 }
 
 //소멸자
 template <typename T>
 LinearList<T>::~LinearList()
 {
-	//남아있는 arr의 모든 요소를 순회하며 딜리트 해줘야 함.
-	delete arr;
+	delete[] arr;
+	arr = nullptr;
 }
