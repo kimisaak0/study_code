@@ -27,8 +27,8 @@ public:
 
 	void SetCursor(int index);            //커서 포인터를 지정한 위치로 이동.
 	//리스트 순회용
-	T Next();
-	T Prev();
+	T& Next();
+	T& Prev();
 
 public:
 	SircularLinkedList();
@@ -39,7 +39,6 @@ template <typename T>
 SircularLinkedList<T>::SircularLinkedList()
 {
 	pHead = nullptr;
-	
 	iSize = 0;
 }
 
@@ -63,33 +62,31 @@ int SircularLinkedList<T>::AddData(int index, T data)
 		pCursor = pHead = newnode;
 	}
 	else {
-		if (index <= 0) {
+		if (index <= 0 || index >= iSize - 1) {
 			newnode->prev = pHead->prev;
 			newnode->next = pHead;
-			pCursor = pHead = newnode;
-		}
-		else if (index >= iSize - 1) {
-			newnode->prev = pHead->prev;
-			newnode->next = pHead;
+			pHead->prev->next = newnode;
+			pHead->prev = newnode;
+			if (index <= 0) {
+				pCursor = pHead = newnode;
+			}
 		}
 		else {
 			node<T>* pFind = pHead;
 			if (index <= iSize / 2) {
-				for (int i = 0; i < index-1; i++) {
+				for (int i = 0; i < index - 1; i++) {
 					pFind = pFind->next;
 				}
-				newnode->prev = pFind;
-				newnode->next = pFind->next;
-				pFind->next = newnode;
 			}
 			else {
-				for (int i = 0; i < iSize - index; i++) {
+				for (int i = 0; i < iSize - index + 1; i++) {
 					pFind = pFind->prev;
 				}
-				newnode->prev = pFind->prev;
-				newnode->next = pFind;
-				pFind->prev = newnode;
 			}
+			newnode->prev = pFind;
+			newnode->next = pFind->next;
+			pFind->next->prev = newnode;
+			pFind->next = newnode;
 		}
 	}
 
@@ -107,7 +104,7 @@ T& SircularLinkedList<T>::CheckData(int index)
 
 	node<T>* pFind = pHead;
 	if (iIndex <= iSize / 2) {
-		for (int i = 0; i < iIndex - 1; i++) {
+		for (int i = 0; i < iIndex; i++) {
 			pFind = pFind->next;
 		}
 	}
@@ -131,7 +128,7 @@ void SircularLinkedList<T>::ChangeData(int index, T data)
 
 	node<T>* pFind = pHead;
 	if (iIndex <= iSize / 2) {
-		for (int i = 0; i < iIndex - 1; i++) {
+		for (int i = 0; i < iIndex; i++) {
 			pFind = pFind->next;
 		}
 	}
@@ -148,28 +145,33 @@ void SircularLinkedList<T>::ChangeData(int index, T data)
 template <typename T>
 int SircularLinkedList<T>::DeleteData(int index)
 {
+	if (pHead == nullptr) {
+		return 0;
+	}
+
 	node<T>* pDel = nullptr;
 	int iIndex = index;
 
 	if (index <= 0) {
 		pDel = pHead;
 		pHead = pHead->next;
+		pDel->prev->next = pHead;
 		pHead->prev = pDel->prev;
 		delete pDel;
 		pCursor = pHead;
 		return --iSize;
 	}
-	
-	if (index >= iSize) {
-		iIndex = iSize - 1;
-	}
 
-	if (iIndex == iSize - 1) {
+	if (index >= iSize - 1) {
 		pDel = pHead->prev;
-		pHead->prev = pDel->prev;
 		pDel->prev->next = pHead;
+		pHead->prev = pDel->prev;
 		delete pDel;
 		return --iSize;
+	}
+	
+	if (index > iSize - 1) {
+		iIndex = iSize - 1;
 	}
 
 	node<T>* pFind = pHead;
@@ -196,19 +198,25 @@ int SircularLinkedList<T>::DeleteData(int index)
 template <typename T>
 int SircularLinkedList<T>::DeleteValue(T data)
 {
+	if (pHead == nullptr) {
+		return 0;
+	}
+
 	node<T>* pDel = nullptr;
-	while (pHead != nullptr && pHead->data == data) {
+	while (pHead->data == data) {
 		pDel = pHead;
 		pHead = pHead->next;
+		pDel->prev->next = pHead;
 		pHead->prev = pDel->prev;
 		delete pDel;
 		pCursor = pHead;
 		iSize--;
-	}
+		if (iSize == 0) {
+			pHead = nullptr;
+			return 0;
+		}
+	} 
 
-	if (pHead == nullptr) {
-		return 0;
-	}
 
 	node<T>* pFind = pHead;
 	while (pFind->next != pHead) {
@@ -233,17 +241,17 @@ void SircularLinkedList<T>::SetCursor(int index)
 	pCursor = pHead;
 	int iIndex = index;
 
-	if (index >= iSize - 1) {
+	if (index > iSize - 1) {
 		iIndex = iSize - 1;
 	}
 
 	if (iIndex <= iSize / 2) {
-		for (int i = 0; i < iIndex - 1; i++) {
+		for (int i = 0; i < iIndex; i++) {
 			pCursor = pCursor->next;
 		}
 	}
 	else {
-		for (int i = 0; i < iSize - iIndex + 1; i++) {
+		for (int i = 0; i < iSize - iIndex; i++) {
 			pCursor = pCursor->prev;
 		}
 	}
@@ -251,9 +259,9 @@ void SircularLinkedList<T>::SetCursor(int index)
 
 //리스트 순회용
 template <typename T>
-T SircularLinkedList<T>::Next()
+T& SircularLinkedList<T>::Next()
 {
-	T ret = pCursor->data;
+	T& ret = pCursor->data;
 
 	if (pCursor->next != nullptr) {
 		pCursor = pCursor->next;
@@ -263,9 +271,9 @@ T SircularLinkedList<T>::Next()
 }
 
 template <typename T>
-T SircularLinkedList<T>::Prev()
+T& SircularLinkedList<T>::Prev()
 {
-	T ret = pCursor->data;
+	T& ret = pCursor->data;
 
 	if (pCursor->prev != nullptr) {
 		pCursor = pThis->prev;

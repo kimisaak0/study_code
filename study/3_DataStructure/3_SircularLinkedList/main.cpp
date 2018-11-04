@@ -5,13 +5,15 @@ int main()
 {
 	SircularLinkedList<int> a;
 
-	a.AddData(a.getSize(), 1);
-	a.AddData(a.getSize(), 2);
-	a.AddData(a.getSize(), 3);
-	a.AddData(a.getSize(), 4);
-	a.AddData(a.getSize(), 5);
+	a.AddData(6, 1);
+	a.AddData(6, 2);
+	a.AddData(6, 3);
+	a.AddData(6, 4);
+	a.AddData(6, 5);
 
-	while (true) {
-		std::cout << a.Next() << std::endl;
-	}
+	a.SetCursor(0);
+
+	std::cout << a.Next();
+
+
 }

@@ -29,8 +29,8 @@ public:
 
 	void SetCursor(int index);            //커서 포인터를 지정한 위치로 이동.
 	//리스트 순회용
-	T Next(); 
-	T Prev();
+	T& Next(); 
+	T& Prev();
 
 public:
 	DoublyLinkedList();
@@ -269,11 +269,11 @@ void DoublyLinkedList<T>::SetCursor(int index)
 
 //리스트 순회용
 template <typename T>
-T DoublyLinkedList<T>::Next()
+T& DoublyLinkedList<T>::Next()
 {
-	T ret = pCursor->data;
+	T& ret = pCursor->data;
 
-	if (pCursor->next != nullptr) {
+	if (pCursor != nullptr && pCursor->next != nullptr) {
 		pCursor = pCursor->next;
 	}
 
@@ -282,11 +282,11 @@ T DoublyLinkedList<T>::Next()
 
 
 template <typename T>
-T DoublyLinkedList<T>::Prev()
+T& DoublyLinkedList<T>::Prev()
 {
-	T ret = pCursor->data;
+	T& ret = pCursor->data;
 
-	if (pCursor->prev != nullptr) {
+	if (pCursor != nullptr && pCursor->prev != nullptr) {
 		pCursor = pCursor->prev;
 	}
 

@@ -26,7 +26,7 @@ public:
 	int DeleteValue(T data);              //지정한 값을 가진 노드(들) 삭제.
 
 	void SetCursor(int index);            //커서 포인터를 지정한 위치로 이동.
-	T Next(); //리스트 순회용
+	T& Next(); //리스트 순회용
 
 public:
 	SingleLinkedList();
@@ -225,11 +225,11 @@ void SingleLinkedList<T>::SetCursor(int index)
 
 //리스트 순회용
 template <typename T>
-T SingleLinkedList<T>::Next()
+T& SingleLinkedList<T>::Next()
 {
-	T ret = pCursor->data;
+	T& ret = pCursor->data;
 
-	if (pCursor->next != nullptr) {
+	if (pCursor != nullptr && pCursor->next != nullptr) {
 		pCursor = pCursor->next;
 	}
 
