@@ -20,8 +20,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{C6F5A9FA-893E-46F7-8C74-2A27C349925A}</ProjectGuid>
-    <RootNamespace>My3SircularLinkedList</RootNamespace>
+    <ProjectGuid>{FE3710D3-C5C2-4F32-97A1-B83C877434CB}</ProjectGuid>
+    <RootNamespace>My6Queuelist</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -70,8 +70,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>../../../../z_End/DS/3/</OutDir>
-    <IntDir>../../../../z_Mid/DS/3/</IntDir>
+    <OutDir>../../../../z_End/DS/6/</OutDir>
+    <IntDir>../../../../z_Mid/DS/6/</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -118,7 +118,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="SircularLinkedList.h" />
+    <ClInclude Include="QueueList.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
