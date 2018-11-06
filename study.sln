@@ -139,6 +139,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "5_Stack_list", "study\3_Dat
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "6_Queue_list", "study\3_DataStructure\6_Queue_list\6_Queue_list.vcxproj", "{FE3710D3-C5C2-4F32-97A1-B83C877434CB}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "7_CircularQueue_array", "study\3_DataStructure\7_CircularQueue_array\7_CircularQueue_array.vcxproj", "{87C9CCD4-BF1A-435D-B492-3DDC76E95B76}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -595,6 +597,14 @@ Global
 		{FE3710D3-C5C2-4F32-97A1-B83C877434CB}.Release|x64.Build.0 = Release|x64
 		{FE3710D3-C5C2-4F32-97A1-B83C877434CB}.Release|x86.ActiveCfg = Release|Win32
 		{FE3710D3-C5C2-4F32-97A1-B83C877434CB}.Release|x86.Build.0 = Release|Win32
+		{87C9CCD4-BF1A-435D-B492-3DDC76E95B76}.Debug|x64.ActiveCfg = Debug|x64
+		{87C9CCD4-BF1A-435D-B492-3DDC76E95B76}.Debug|x64.Build.0 = Debug|x64
+		{87C9CCD4-BF1A-435D-B492-3DDC76E95B76}.Debug|x86.ActiveCfg = Debug|Win32
+		{87C9CCD4-BF1A-435D-B492-3DDC76E95B76}.Debug|x86.Build.0 = Debug|Win32
+		{87C9CCD4-BF1A-435D-B492-3DDC76E95B76}.Release|x64.ActiveCfg = Release|x64
+		{87C9CCD4-BF1A-435D-B492-3DDC76E95B76}.Release|x64.Build.0 = Release|x64
+		{87C9CCD4-BF1A-435D-B492-3DDC76E95B76}.Release|x86.ActiveCfg = Release|Win32
+		{87C9CCD4-BF1A-435D-B492-3DDC76E95B76}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -659,6 +669,7 @@ Global
 		{80E477DF-6BBB-42A9-AF79-6D1456B2E7C3} = {F95B6AF2-3E00-4CBE-A08A-C862E9FD9AE8}
 		{888316C4-B5AD-46BB-A0D5-BE457E985D87} = {F95B6AF2-3E00-4CBE-A08A-C862E9FD9AE8}
 		{FE3710D3-C5C2-4F32-97A1-B83C877434CB} = {F95B6AF2-3E00-4CBE-A08A-C862E9FD9AE8}
+		{87C9CCD4-BF1A-435D-B492-3DDC76E95B76} = {F95B6AF2-3E00-4CBE-A08A-C862E9FD9AE8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2E4B6B40-23D2-44B1-8503-70BBEDC4E4D5}
