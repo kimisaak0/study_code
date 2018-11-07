@@ -143,6 +143,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "8_a_ReverseString", "study\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "8_b_RadixTransformation", "study\3_DataStructure\8_b_RadixTransformation\8_b_RadixTransformation.vcxproj", "{46BEC021-8787-418E-BE47-F6C91C8D6522}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "9_QueueingTheory", "study\3_DataStructure\9_QueueingTheory\9_QueueingTheory.vcxproj", "{21F75AAF-E043-4EFF-ACCD-8765F6FDB77A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -623,6 +625,14 @@ Global
 		{46BEC021-8787-418E-BE47-F6C91C8D6522}.Release|x64.Build.0 = Release|x64
 		{46BEC021-8787-418E-BE47-F6C91C8D6522}.Release|x86.ActiveCfg = Release|Win32
 		{46BEC021-8787-418E-BE47-F6C91C8D6522}.Release|x86.Build.0 = Release|Win32
+		{21F75AAF-E043-4EFF-ACCD-8765F6FDB77A}.Debug|x64.ActiveCfg = Debug|x64
+		{21F75AAF-E043-4EFF-ACCD-8765F6FDB77A}.Debug|x64.Build.0 = Debug|x64
+		{21F75AAF-E043-4EFF-ACCD-8765F6FDB77A}.Debug|x86.ActiveCfg = Debug|Win32
+		{21F75AAF-E043-4EFF-ACCD-8765F6FDB77A}.Debug|x86.Build.0 = Debug|Win32
+		{21F75AAF-E043-4EFF-ACCD-8765F6FDB77A}.Release|x64.ActiveCfg = Release|x64
+		{21F75AAF-E043-4EFF-ACCD-8765F6FDB77A}.Release|x64.Build.0 = Release|x64
+		{21F75AAF-E043-4EFF-ACCD-8765F6FDB77A}.Release|x86.ActiveCfg = Release|Win32
+		{21F75AAF-E043-4EFF-ACCD-8765F6FDB77A}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -689,6 +699,7 @@ Global
 		{87C9CCD4-BF1A-435D-B492-3DDC76E95B76} = {F95B6AF2-3E00-4CBE-A08A-C862E9FD9AE8}
 		{2F0605A0-CCD2-4B28-BA93-672E19350939} = {F95B6AF2-3E00-4CBE-A08A-C862E9FD9AE8}
 		{46BEC021-8787-418E-BE47-F6C91C8D6522} = {F95B6AF2-3E00-4CBE-A08A-C862E9FD9AE8}
+		{21F75AAF-E043-4EFF-ACCD-8765F6FDB77A} = {F95B6AF2-3E00-4CBE-A08A-C862E9FD9AE8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2E4B6B40-23D2-44B1-8503-70BBEDC4E4D5}

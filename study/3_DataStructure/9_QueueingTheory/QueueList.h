@@ -1,16 +1,17 @@
 #pragma once
 
 template <typename T>
+struct node {
+	T data;
+	node<T>* next;
+};
+
+template <typename T>
 class QueueList
 {
-	template <typename T>
-	struct node {
-		T data;
-		node<T>* next;
-	};
-
 	node<T>* pFront;
 	node<T>* pRear;
+	node<T>* pCursor;
 
 	int iCount;
 
@@ -19,6 +20,10 @@ public:
 	int Remove();
 	T  Peek();
 	int Count();
+
+	//대기 목록 보여주기용
+	void ResetCursor();
+	node<T>* Next(); 
 
 public:
 	QueueList();
@@ -33,7 +38,6 @@ QueueList<T>::QueueList()
 	iCount = 0;
 }
 
-
 template <typename T>
 int QueueList<T>::Add(T data)
 {
@@ -43,6 +47,9 @@ int QueueList<T>::Add(T data)
 
 	if (pRear != nullptr) {
 		pRear->next = newnode;
+		if (pFront == nullptr) {
+			pFront = pRear;
+		}
 	}
 	else {
 		pFront = newnode;
@@ -58,9 +65,12 @@ int QueueList<T>::Remove()
 {
 	node<T>* pDel = pFront;
 	pFront = pFront->next;
+	if (--iCount == 0) {
+		pRear = nullptr;
+	}
 	delete pDel;
 
-	return 	--iCount;
+	return 	iCount;
 }
 
 template <typename T>
@@ -73,6 +83,25 @@ template <typename T>
 int QueueList<T>::Count()
 {
 	return iCount;
+}
+
+//리스트 순회용 (대기자 리스트 보여주기 용)
+template <typename T>
+void QueueList<T>::ResetCursor()
+{
+	pCursor = pFront;
+}
+
+template <typename T>
+node<T>* QueueList<T>::Next()
+{
+	node<T>* ret = pCursor;
+
+	if (pCursor != nullptr && pCursor->next != nullptr) {
+		pCursor = pCursor->next;
+	}
+
+	return ret;
 }
 
 template <typename T>
