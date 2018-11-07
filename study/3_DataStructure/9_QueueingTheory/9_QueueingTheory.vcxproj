@@ -23,6 +23,7 @@
     <ProjectGuid>{21F75AAF-E043-4EFF-ACCD-8765F6FDB77A}</ProjectGuid>
     <RootNamespace>My9QueueingTheory</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <ProjectName>09_QueueingTheory</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

@@ -23,7 +23,7 @@
     <ProjectGuid>{2F0605A0-CCD2-4B28-BA93-672E19350939}</ProjectGuid>
     <RootNamespace>My8StackSampleReverseString</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
-    <ProjectName>8_a_ReverseString</ProjectName>
+    <ProjectName>08_a_ReverseString</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

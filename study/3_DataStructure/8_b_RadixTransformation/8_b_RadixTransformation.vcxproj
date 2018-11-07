@@ -23,6 +23,7 @@
     <ProjectGuid>{46BEC021-8787-418E-BE47-F6C91C8D6522}</ProjectGuid>
     <RootNamespace>My8bRadixTransformation</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <ProjectName>08_b_RadixTransformation</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

@@ -23,6 +23,7 @@
     <ProjectGuid>{C6F5A9FA-893E-46F7-8C74-2A27C349925A}</ProjectGuid>
     <RootNamespace>My3SircularLinkedList</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <ProjectName>03_SircularLinkedList</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

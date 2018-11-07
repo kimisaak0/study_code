@@ -123,27 +123,31 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "8_net", "8_net", "{560EA5D1
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "9_DB", "9_DB", "{6202D3E1-299D-4255-83AA-DFEB9E4EA8A5}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "0_LinearList", "study\3_DataStructure\0_LinearList\0_LinearList.vcxproj", "{A709B9E1-ECC7-447C-87D3-652D88C028D1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "00_LinearList", "study\3_DataStructure\0_LinearList\0_LinearList.vcxproj", "{A709B9E1-ECC7-447C-87D3-652D88C028D1}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "1_SingleLinkedList", "study\3_DataStructure\1_SingleLinkedList\1_SingleLinkedList.vcxproj", "{CA35B2F5-BA9E-403E-ABA6-8599594D9AD8}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "01_SingleLinkedList", "study\3_DataStructure\1_SingleLinkedList\1_SingleLinkedList.vcxproj", "{CA35B2F5-BA9E-403E-ABA6-8599594D9AD8}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "2_DoublyLinkedList", "study\3_DataStructure\2_DoublyLinkedList\2_DoublyLinkedList.vcxproj", "{0AB70DF8-5741-461F-AB1B-86A348A3A7E9}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "02_DoublyLinkedList", "study\3_DataStructure\2_DoublyLinkedList\2_DoublyLinkedList.vcxproj", "{0AB70DF8-5741-461F-AB1B-86A348A3A7E9}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "3_SircularLinkedList", "study\3_DataStructure\3_SircularLinkedList\3_SircularLinkedList.vcxproj", "{C6F5A9FA-893E-46F7-8C74-2A27C349925A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "03_SircularLinkedList", "study\3_DataStructure\3_SircularLinkedList\3_SircularLinkedList.vcxproj", "{C6F5A9FA-893E-46F7-8C74-2A27C349925A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "4_Stack_array", "study\3_DataStructure\4_Stack_array\4_Stack_array.vcxproj", "{80E477DF-6BBB-42A9-AF79-6D1456B2E7C3}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "04_Stack_array", "study\3_DataStructure\4_Stack_array\4_Stack_array.vcxproj", "{80E477DF-6BBB-42A9-AF79-6D1456B2E7C3}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "5_Stack_list", "study\3_DataStructure\5_Stack_list\5_Stack_list.vcxproj", "{888316C4-B5AD-46BB-A0D5-BE457E985D87}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "05_Stack_list", "study\3_DataStructure\5_Stack_list\5_Stack_list.vcxproj", "{888316C4-B5AD-46BB-A0D5-BE457E985D87}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "6_Queue_list", "study\3_DataStructure\6_Queue_list\6_Queue_list.vcxproj", "{FE3710D3-C5C2-4F32-97A1-B83C877434CB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "06_Queue_list", "study\3_DataStructure\6_Queue_list\6_Queue_list.vcxproj", "{FE3710D3-C5C2-4F32-97A1-B83C877434CB}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "7_CircularQueue_array", "study\3_DataStructure\7_CircularQueue_array\7_CircularQueue_array.vcxproj", "{87C9CCD4-BF1A-435D-B492-3DDC76E95B76}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "07_CircularQueue_array", "study\3_DataStructure\7_CircularQueue_array\7_CircularQueue_array.vcxproj", "{87C9CCD4-BF1A-435D-B492-3DDC76E95B76}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "8_a_ReverseString", "study\3_DataStructure\8_StackSample(ReverseString)\8_StackSample(ReverseString).vcxproj", "{2F0605A0-CCD2-4B28-BA93-672E19350939}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "08_a_ReverseString", "study\3_DataStructure\8_StackSample(ReverseString)\8_StackSample(ReverseString).vcxproj", "{2F0605A0-CCD2-4B28-BA93-672E19350939}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "8_b_RadixTransformation", "study\3_DataStructure\8_b_RadixTransformation\8_b_RadixTransformation.vcxproj", "{46BEC021-8787-418E-BE47-F6C91C8D6522}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "08_b_RadixTransformation", "study\3_DataStructure\8_b_RadixTransformation\8_b_RadixTransformation.vcxproj", "{46BEC021-8787-418E-BE47-F6C91C8D6522}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "9_QueueingTheory", "study\3_DataStructure\9_QueueingTheory\9_QueueingTheory.vcxproj", "{21F75AAF-E043-4EFF-ACCD-8765F6FDB77A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "09_QueueingTheory", "study\3_DataStructure\9_QueueingTheory\9_QueueingTheory.vcxproj", "{21F75AAF-E043-4EFF-ACCD-8765F6FDB77A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "10_PalindromesCheck", "study\3_DataStructure\10_PalindromesCheck\10_PalindromesCheck.vcxproj", "{B0857300-9500-4C9E-BAF1-1192DE63972A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "11_calculator", "study\3_DataStructure\11_calculator\11_calculator.vcxproj", "{426C2044-050B-4AFA-B2F7-BF34D52C256B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -633,6 +637,22 @@ Global
 		{21F75AAF-E043-4EFF-ACCD-8765F6FDB77A}.Release|x64.Build.0 = Release|x64
 		{21F75AAF-E043-4EFF-ACCD-8765F6FDB77A}.Release|x86.ActiveCfg = Release|Win32
 		{21F75AAF-E043-4EFF-ACCD-8765F6FDB77A}.Release|x86.Build.0 = Release|Win32
+		{B0857300-9500-4C9E-BAF1-1192DE63972A}.Debug|x64.ActiveCfg = Debug|x64
+		{B0857300-9500-4C9E-BAF1-1192DE63972A}.Debug|x64.Build.0 = Debug|x64
+		{B0857300-9500-4C9E-BAF1-1192DE63972A}.Debug|x86.ActiveCfg = Debug|Win32
+		{B0857300-9500-4C9E-BAF1-1192DE63972A}.Debug|x86.Build.0 = Debug|Win32
+		{B0857300-9500-4C9E-BAF1-1192DE63972A}.Release|x64.ActiveCfg = Release|x64
+		{B0857300-9500-4C9E-BAF1-1192DE63972A}.Release|x64.Build.0 = Release|x64
+		{B0857300-9500-4C9E-BAF1-1192DE63972A}.Release|x86.ActiveCfg = Release|Win32
+		{B0857300-9500-4C9E-BAF1-1192DE63972A}.Release|x86.Build.0 = Release|Win32
+		{426C2044-050B-4AFA-B2F7-BF34D52C256B}.Debug|x64.ActiveCfg = Debug|x64
+		{426C2044-050B-4AFA-B2F7-BF34D52C256B}.Debug|x64.Build.0 = Debug|x64
+		{426C2044-050B-4AFA-B2F7-BF34D52C256B}.Debug|x86.ActiveCfg = Debug|Win32
+		{426C2044-050B-4AFA-B2F7-BF34D52C256B}.Debug|x86.Build.0 = Debug|Win32
+		{426C2044-050B-4AFA-B2F7-BF34D52C256B}.Release|x64.ActiveCfg = Release|x64
+		{426C2044-050B-4AFA-B2F7-BF34D52C256B}.Release|x64.Build.0 = Release|x64
+		{426C2044-050B-4AFA-B2F7-BF34D52C256B}.Release|x86.ActiveCfg = Release|Win32
+		{426C2044-050B-4AFA-B2F7-BF34D52C256B}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -700,6 +720,8 @@ Global
 		{2F0605A0-CCD2-4B28-BA93-672E19350939} = {F95B6AF2-3E00-4CBE-A08A-C862E9FD9AE8}
 		{46BEC021-8787-418E-BE47-F6C91C8D6522} = {F95B6AF2-3E00-4CBE-A08A-C862E9FD9AE8}
 		{21F75AAF-E043-4EFF-ACCD-8765F6FDB77A} = {F95B6AF2-3E00-4CBE-A08A-C862E9FD9AE8}
+		{B0857300-9500-4C9E-BAF1-1192DE63972A} = {F95B6AF2-3E00-4CBE-A08A-C862E9FD9AE8}
+		{426C2044-050B-4AFA-B2F7-BF34D52C256B} = {F95B6AF2-3E00-4CBE-A08A-C862E9FD9AE8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2E4B6B40-23D2-44B1-8503-70BBEDC4E4D5}

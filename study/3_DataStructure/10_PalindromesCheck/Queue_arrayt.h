@@ -1,12 +1,12 @@
 #pragma once
 
 template <typename T>
-class CircularQueue
+class QueueArray
 {
 	T* capacity;
-	int iSize;
 
 	int iCount;
+	int iSize;
 
 	int iFront;
 	int iRear;
@@ -16,51 +16,42 @@ public:
 	int Remove();
 	T   Peek();
 	int Count();
-	int CapacitySize();
 
 public:
-	CircularQueue(int size);
-	virtual ~CircularQueue();
+	QueueArray(int size);
+	virtual ~QueueArray();
 };
 
 
 template <typename T>
-CircularQueue<T>::CircularQueue(int size)
+QueueArray<T>::QueueArray(int size)
 {
 	capacity = new T[size];
-	
+
 	iSize = size;
 	iCount = 0;
 
 	iFront = 0;
-	iRear  = 0;
+	iRear = 0;
 }
 
 template <typename T>
-int CircularQueue<T>::Add(T data)
+int QueueArray<T>::Add(T data)
 {
 	if (iCount == iSize) {
 		return iSize;
 	}
 
-	if (iRear == iSize) {
-		iRear = 0;
-	}
-
 	capacity[iRear++] = data;
-	
+
 	return ++iCount;
 }
 
 template <typename T>
-int CircularQueue<T>::Remove()
+int QueueArray<T>::Remove()
 {
 	if (iCount == 0) {
 		return 0;
-	}
-
-	if (iFront == iSize) {
-		iFront = 0;
 	}
 
 	iFront++;
@@ -70,25 +61,19 @@ int CircularQueue<T>::Remove()
 }
 
 template <typename T>
-T CircularQueue<T>::Peek()
+T QueueArray<T>::Peek()
 {
 	return capacity[iFront];
 }
 
 template <typename T>
-int CircularQueue<T>::Count()
+int QueueArray<T>::Count()
 {
 	return iCount;
 }
 
 template <typename T>
-int CircularQueue<T>::CapacitySize()
-{
-	return iSIze;
-}
-
-template <typename T>
-CircularQueue<T>::~CircularQueue()
+QueueArray<T>::~QueueArray()
 {
 	delete[] capacity;
 }
