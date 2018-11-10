@@ -155,7 +155,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "13_Scroll_Shelf", "study\3_
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "14_JosephusProblem", "study\3_DataStructure\14_JosephusProblem\14_JosephusProblem.vcxproj", "{7B64D506-58BD-43D6-9776-3B26530F0E5A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "15_AVT_array", "study\3_DataStructure\15_AVT_array\15_AVT_array.vcxproj", "{7F77C742-8026-4185-9A1F-94185CC8688E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "15_ABT_array", "study\3_DataStructure\15_AVT_array\15_AVT_array.vcxproj", "{7F77C742-8026-4185-9A1F-94185CC8688E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "16_BinaryTree_pointer", "study\3_DataStructure\16_ABT_pointer\16_ABT_pointer.vcxproj", "{45999F1A-1023-41C9-8021-CDBD59889969}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -693,6 +695,14 @@ Global
 		{7F77C742-8026-4185-9A1F-94185CC8688E}.Release|x64.Build.0 = Release|x64
 		{7F77C742-8026-4185-9A1F-94185CC8688E}.Release|x86.ActiveCfg = Release|Win32
 		{7F77C742-8026-4185-9A1F-94185CC8688E}.Release|x86.Build.0 = Release|Win32
+		{45999F1A-1023-41C9-8021-CDBD59889969}.Debug|x64.ActiveCfg = Debug|x64
+		{45999F1A-1023-41C9-8021-CDBD59889969}.Debug|x64.Build.0 = Debug|x64
+		{45999F1A-1023-41C9-8021-CDBD59889969}.Debug|x86.ActiveCfg = Debug|Win32
+		{45999F1A-1023-41C9-8021-CDBD59889969}.Debug|x86.Build.0 = Debug|Win32
+		{45999F1A-1023-41C9-8021-CDBD59889969}.Release|x64.ActiveCfg = Release|x64
+		{45999F1A-1023-41C9-8021-CDBD59889969}.Release|x64.Build.0 = Release|x64
+		{45999F1A-1023-41C9-8021-CDBD59889969}.Release|x86.ActiveCfg = Release|Win32
+		{45999F1A-1023-41C9-8021-CDBD59889969}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -766,6 +776,7 @@ Global
 		{2BBF4A31-950B-45F8-8832-AB17E495C4A1} = {F95B6AF2-3E00-4CBE-A08A-C862E9FD9AE8}
 		{7B64D506-58BD-43D6-9776-3B26530F0E5A} = {F95B6AF2-3E00-4CBE-A08A-C862E9FD9AE8}
 		{7F77C742-8026-4185-9A1F-94185CC8688E} = {F95B6AF2-3E00-4CBE-A08A-C862E9FD9AE8}
+		{45999F1A-1023-41C9-8021-CDBD59889969} = {F95B6AF2-3E00-4CBE-A08A-C862E9FD9AE8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2E4B6B40-23D2-44B1-8503-70BBEDC4E4D5}

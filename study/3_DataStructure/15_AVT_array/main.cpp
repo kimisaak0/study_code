@@ -1,18 +1,18 @@
-#include "AVT.h"
+#include "ABT.h"
 #include <iostream>
 
 int main()
 {
-	AVT_array<int> avt(7);
+	ABT_array<int> abt(14);
 
-	for (int i = 0; i < 7; i++) {
-		avt.AddNode(i);
+	for (int i = 0; i < 14; i++) {
+		abt.AddNode(i);
 	}
 	
-	int* arr = new int[avt.Count()];
-	avt.LevelOrderTD(arr);
+	int* arr = new int[abt.Count()];
+	abt.PreInPost(arr,3);
 
-	for (int i = 0; i < 7; i++) {
+	for (int i = 0; i < 14; i++) {
 		std::cout << arr[i] << std::endl;
 	}
 }

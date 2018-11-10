@@ -20,7 +20,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ABT.h">
+    <ClInclude Include="BinaryTree.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
