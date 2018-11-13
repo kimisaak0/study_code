@@ -9,7 +9,7 @@ int main()
 	while (true) {
 		int iSelect = 0;
 
-		std::cout << "\n1. 회원목록 출력, 2. 회원가입 3. 탈퇴 4. 비밀번호수정";
+		std::cout << "\n1. 회원목록 출력, 2. 회원가입 3. 회원검색 4. 탈퇴 5. 비밀번호수정";
 		std::cin >> iSelect;
 
 		switch (iSelect) {
@@ -28,19 +28,20 @@ int main()
 			case 3: {
 				char name[26];
 				std::cout << "필드명을 입력하세요 : "; scanf("%s", name);
-				Delete(name);
-			} break;
+				Select_2(name);
 
 			case 4: {
 				char name[26];
 				std::cout << "필드명을 입력하세요 : "; scanf("%s", name);
-				Update(name);
+				Delete(name);
 			} break;
 
 			case 5: {
 				char name[26];
 				std::cout << "필드명을 입력하세요 : "; scanf("%s", name);
-				Select_2(name);
+				Update(name);
+			} break;
+
 
 			}
 		}
