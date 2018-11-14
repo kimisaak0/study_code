@@ -1,28 +1,14 @@
 #pragma once
+//일단 이진탐색트리에 구현에 집중하기 위해서 데이터형을 정수로 고정.
 
-template <typename T>
 struct node
 {
-	T data;
+	int data;
 	node* left;
 	node* right;
 };
 
-//트리 관련 전역 함수
-template <typename T>
-node<T>* MakeNode(T data)
-{
-	node<T>* nn = new node<T>;
-	nn->data = data;
-	nn->left = nullptr;
-	nn->right = nullptr;
-
-	return nn;
-}
-
-//작업을 함수포인터로 전달받는 순회 함수
-template <typename T>
-void preorder(node<T>* node, void(*action)(T))
+void preorder(node* node, void(*action)(int))
 {
 	if (node != nullptr) {
 		action(node->data);
@@ -31,20 +17,16 @@ void preorder(node<T>* node, void(*action)(T))
 	}
 }
 
-
-template <typename T>
-void inorder(node<T>* node, void(*action)(T))
+void inorder(node* node, void(*action)(int))
 {
 	if (node != nullptr) {
 		inorder(node->left, action);
 		action(node->data);
-		inorder(node->left, action);
+		inorder(node->right, action);
 	}
 }
 
-
-template <typename T>
-void postorder(node<T>* node, void(*action)(T))
+void postorder(node* node, void(*action)(int))
 {
 	if (node != nullptr) {
 		postorder(node->left, action);
@@ -53,23 +35,189 @@ void postorder(node<T>* node, void(*action)(T))
 	}
 }
 
-
-template <typename T>
-class BinarySeachTree
+class BinarySearchTree
 {
-	node<T>* rootNode;
+public:
+	node* TreePointer;
+
+private:
+	node* &RootNode = TreePointer;
+
+private:
+	node* MakeNode(int data);
+	node* Search(node* nptr, int key);
+	node* delSearch(node* nptr, int key);
+	node* DeleteNode(node* nptr);
 
 public:
-	//노드 포인터를 리턴하는 함수
-	node<T>* getRoot();
-
-	void AddData(T data);
-	void DeleteData(T data);
-
+	node* Search(int key);
+	void AddNode(int data);
+	void DeleteNode(int key);
 
 public:
-	//정렬의 기준이 되는 함수를 매개변수로 갖는 생성자가 필요.
-	//오름차순 정렬을 할지 내림차순 정렬을 할지도 결정되어야 함.
-	BinarySeachTree();
-	virtual ~BinarySeachTree();
+	BinarySearchTree();
+	virtual	~BinarySearchTree();
 };
+
+//----------------------------->>
+
+node* BinarySearchTree::MakeNode(int data)
+{
+	node* nn = new node;
+	nn->data = data;
+	nn->left = nullptr;
+	nn->right = nullptr;
+
+	return nn;
+}
+
+node* BinarySearchTree::Search(node* nptr, int key)
+{
+	if (nptr == nullptr) {
+		return nullptr;
+	}
+	else if (nptr->data == key) {
+		return nptr;
+	}
+	else if (nptr->data > key) {
+		return Search(nptr->left, key);
+	}
+	else {
+		return Search(nptr->right, key);
+	}
+}
+
+node* BinarySearchTree::delSearch(node* nptr, int key)
+{
+	if (nptr == nullptr) {
+		return nullptr;
+	}
+
+	else if (nptr->data > key) {
+		if (nptr->left->data == key) {
+			return nptr;
+		}
+		else {
+			return delSearch(nptr->left, key);
+		}
+	}
+	else if (nptr->data < key) {
+		if (nptr->right->data == key) {
+			return nptr;
+		}
+		else {
+			return delSearch(nptr->right, key);
+		}
+	}
+	else if (nptr->data == key) {
+		return nptr;
+	}
+}
+
+node* BinarySearchTree::DeleteNode(node* nptr)
+{
+	node* ret;
+	if (nptr->left == nullptr && nptr->right == nullptr) {
+		ret = nullptr;
+	}
+	else if (nptr->left != nullptr &&nptr->right == nullptr) {
+		ret = nptr->left;		
+	}
+	else if (nptr->left == nullptr && nptr->right != nullptr) {
+		ret = nptr->right;
+	}
+	else {
+		ret = nptr;
+		node* prev = nullptr;
+		while (nptr->right != nullptr) {
+			nptr->data = nptr->right->data;
+			prev = nptr;
+			nptr = nptr->right;
+		}
+		prev->right = nullptr;
+	}
+
+	delete nptr;
+	return ret;
+}
+
+//----------------------------->>
+
+
+
+BinarySearchTree::BinarySearchTree()
+{
+	TreePointer = nullptr;
+}
+
+node* BinarySearchTree::Search(int key)
+{
+	return Search(RootNode, key);
+}
+
+void BinarySearchTree::AddNode(int data)
+{
+	node* nptr = nullptr;
+
+	if (RootNode == nullptr) {
+		RootNode = MakeNode(data);
+	}
+	else {
+		nptr = RootNode;
+		node* nNode = MakeNode(data);
+
+		while (true) {
+			if (nNode->data < nptr->data) {
+				if (nptr->left != nullptr) {
+					nptr = nptr->left;
+				}
+				else {
+					nptr->left = nNode;
+					break;
+				}
+			}
+			else if(nNode->data > nptr->data) {
+				if (nptr->right != nullptr) {
+					nptr = nptr->right;
+				}
+				else {
+					nptr->right = nNode;
+					break;
+				}
+			}
+			else {
+				if (nptr->left == nullptr) {
+					nptr->left = nNode;
+					break;
+				}
+				else if (nptr->right == nullptr) {
+					nptr->right = nNode;
+					break;
+				}
+				else {
+					nptr = nptr->left;
+				}
+			}
+		}
+	}
+}
+
+void BinarySearchTree::DeleteNode(int key)
+{
+	node* sNode = delSearch(RootNode, key);
+
+	if (sNode == RootNode) {
+		DeleteNode(sNode);
+	}
+	else if(sNode->left != nullptr && sNode->left->data == key) {
+		sNode->left = DeleteNode(sNode->left);
+	}
+	else if (sNode->right != nullptr && sNode->right->data == key) {
+		sNode->right = DeleteNode(sNode->right);
+	}
+}
+
+BinarySearchTree::~BinarySearchTree()
+{
+
+}
