@@ -1,17 +1,12 @@
-#define  _CRT_SECURE_NO_WARNINGS
+#include "odbc_lib.h"
 
-#pragma once
+#ifndef ODBC
+#define ODBC
 
-#include <Windows.h>
-#include <sql.h>
-#include <sqlext.h>
-#include <tchar.h>
-#include <iostream>
-
-SQLHENV  g_hEnv;
-SQLHDBC  g_hDbc;
-SQLHSTMT g_hStmt;
-
+extern SQLHENV  g_hEnv;
+extern SQLHDBC  g_hDbc;
+extern SQLHSTMT g_hStmt;
+#endif
 
 SQLRETURN HandleDiagnosticRecord()
 {
@@ -51,7 +46,7 @@ int Init()
 	SQLSMALLINT cbOutCon;
 
 	_stprintf(InCon, _T("%s"), _T("Driver={SQL Server};Server=shader.kr;Address=192.168.0.104,1433;Network=dbmssocn;Database=KGCA_SAMPLE;Uid=sa;Pwd=kgca!@34;"));
-	SQLRETURN ret = SQLDriverConnect(g_hDbc, NULL, (SQLTCHAR*)InCon, _countof(InCon), OutCon,	_countof(OutCon), &cbOutCon, SQL_DRIVER_NOPROMPT);
+	SQLRETURN ret = SQLDriverConnect(g_hDbc, NULL, (SQLTCHAR*)InCon, _countof(InCon), OutCon, _countof(OutCon), &cbOutCon, SQL_DRIVER_NOPROMPT);
 
 	if (ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO) {
 		return -1;
@@ -101,13 +96,13 @@ void Select_2(const char* name)
 	SQLCHAR cID[20] = { 0, };
 	SQLCHAR cPASS[20] = { 0, };
 	SQLLEN lID, lPASS;
-	
+
 	TCHAR buffer[256] = { 0, };
 
 	SQLBindCol(g_hStmt, 1, SQL_C_CHAR, cID, sizeof(cID), &lID);
 	SQLBindCol(g_hStmt, 2, SQL_C_CHAR, cPASS, sizeof(cPASS), &lPASS);
 
-	SQLBindParameter(g_hStmt, 1, SQL_PARAM_OUTPUT, SQL_C_LONG, SQL_INTEGER, 0, 0, &sRet, 0 , 0);
+	SQLBindParameter(g_hStmt, 1, SQL_PARAM_OUTPUT, SQL_C_LONG, SQL_INTEGER, 0, 0, &sRet, 0, 0);
 	SQLBindParameter(g_hStmt, 2, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_VARCHAR, 20, 0, (SQLTCHAR*)&cSearchID, 0, 0);
 
 	wsprintf((LPTSTR)buffer, _T("{? = CALL usp_Select(?)}"));
@@ -184,4 +179,57 @@ void Update(const char* name)
 		Select();
 	}
 	SQLCloseCursor(g_hStmt);
+}
+
+void run()
+{
+	int iRet = Init();
+
+	while (true) {
+		int iSelect = 0;
+
+		std::cout << "\n1. 회원목록 출력, 2. 회원가입 3. 회원검색 4. 탈퇴 5. 비밀번호수정";
+		std::cin >> iSelect;
+
+		switch (iSelect) {
+			case 1: {
+				Select();
+			} break;
+
+			case 2: {
+				char name[26] = { 0, };
+				char pass[26] = { 0, };
+				std::cout << "ID를 입력하세요 : "; scanf("%s", name);
+				std::cout << "PASS를 입력하세요 : "; scanf("%s", pass);
+				Add(name, pass);
+			} break;
+
+			case 3: {
+				char name[26];
+				std::cout << "필드명을 입력하세요 : "; scanf("%s", name);
+				Select_2(name);
+
+			case 4: {
+				char name[26];
+				std::cout << "필드명을 입력하세요 : "; scanf("%s", name);
+				Delete(name);
+			} break;
+
+			case 5: {
+				char name[26];
+				std::cout << "필드명을 입력하세요 : "; scanf("%s", name);
+				Update(name);
+			} break;
+
+
+			}
+		}
+	}
+
+	SQLFreeHandle(SQL_HANDLE_STMT, g_hStmt);
+	SQLDisconnect(g_hStmt);
+	SQLFreeHandle(SQL_HANDLE_DBC, g_hDbc);
+	SQLDisconnect(g_hDbc);
+	SQLFreeHandle(SQL_HANDLE_ENV, g_hEnv);
+	SQLDisconnect(g_hEnv);
 }
