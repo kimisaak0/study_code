@@ -1,15 +1,14 @@
 #pragma once
 #include <math.h>
 
-template <typename T>
 class Heap
 {
-	T* capacity;
-	int size;
+	int* capacity;
+	int iSize;
 
-	int iLastIndex;
+	int iCount;
 
-	T tRet;
+	int* tRet;
 
 private:
 	int   ParentIndex(int index); // 지정한 노드의 부모 노드의 인덱스를 반환
@@ -17,9 +16,9 @@ private:
 	int   RightIndex(int index);  // 지정한 노드의 오른쪽 노드의 인덱스를 반환
 
 public:
-	bool AddNode(T data);
-	T&   DelNode();
-	T&   CheckRoot();
+	bool   AddNode(int data);
+	int    DelNode();
+	int    CheckRoot();
 
 	int  getCount();
 	int  getSize();
@@ -34,8 +33,7 @@ public:
 
 //private Function
 // 지정한 노드의 부모 노드의 인덱스를 반환, -1은 없음을 의미.
-template <typename T>
-int   Heap<T>::ParentIndex(int index)
+int   Heap::ParentIndex(int index)
 {
 	if (index == 0) {
 		return -1;
@@ -45,12 +43,11 @@ int   Heap<T>::ParentIndex(int index)
 }
 
 // 지정한 노드의 왼쪽 노드의 인덱스를 반환, -1은 없음을 의미.
-template <typename T>
-int   Heap<T>::LeftIndex(int index)
+int   Heap::LeftIndex(int index)
 {
 	int iRet = index * 2 + 1;
 
-	if (iRet >= iLastIndex) {
+	if (iRet >= iCount) {
 		return -1;
 	}
 
@@ -58,12 +55,11 @@ int   Heap<T>::LeftIndex(int index)
 }
 
 // 지정한 노드의 오른쪽 노드의 인덱스를 반환, -1은 없음을 의미.
-template <typename T>
-int   Heap<T>::RightIndex(int index)
+int   Heap::RightIndex(int index)
 {
 	int iRet = index * 2 + 2;
 
-	if (iRet >= iLastIndex) {
+	if (iRet >= iCount) {
 		return -1;
 	}
 
@@ -73,29 +69,28 @@ int   Heap<T>::RightIndex(int index)
 
 //---------------------------->
 //Public Function
-template <typename T>
-Heap<T>::Heap(int _size)
+Heap::Heap(int _size)
 {
-	size = _size;
-	capacity = new T[size];
-	iLastIndex = 0;
+	iSize = _size;
+	capacity = new int[iSize];
+	iCount = 0;
+	tRet = new int;
 }
 
-
-template <typename T>
-bool Heap<T>::AddNode(T data)
+bool Heap::AddNode(int data)
 {
-	if (iLastIndex == size) {
+	if (iCount == iSize) {
 		return false;
 	}
 
-	capacity[iLastIndex++] = data;
+	capacity[iCount] = data;
 
-	int nowIndex = iLastIndex;
+	int nowIndex = iCount++;
 
 	while (true) {
+
 		if (capacity[ParentIndex(nowIndex)] > capacity[nowIndex]) {
-			T temp = capacity[ParentIndex(nowIndex)];
+			int temp = capacity[ParentIndex(nowIndex)];
 			capacity[ParentIndex(nowIndex)] = capacity[nowIndex];
 			capacity[nowIndex] = temp;
 			nowIndex = ParentIndex(nowIndex);
@@ -103,80 +98,92 @@ bool Heap<T>::AddNode(T data)
 		else {
 			break;
 		}
-			
+
 	}
 
 	return true;
 }
 
-template <typename T>
-T& Heap<T>::DelNode()
+int Heap::DelNode()
 {
-	if (iLastIndex == 0) {
+	if (iCount == 0) {
 		tRet = nullptr;
 	}
 
-	iLastIndex--;
+	iCount--;
 
-	tRet = capacity[0];
-	capacity[0] = capacity[iLastIndex];
 
-	int nowInedex = 0;
+	*tRet = capacity[0];
+	capacity[0] = capacity[iCount];
+
+	int nowIndex = 0;
+	bool whilesw = true;
+
+	while (whilesw) {
+
+		int left = LeftIndex(nowIndex);
+		int right = RightIndex(nowIndex);
+
+
+		if (left == -1) {
+			left = iCount;
+			whilesw = false;
+		} 
+
+		if (right == -1) {
+			right = iCount;
+			whilesw = false;
+		}
+
+
+		if (capacity[left] < capacity[right]) {
 	
-
-	while (true) {
-		if (capacity[LeftIndex(nowInedex)] < capacity[RightIndex(nowInedex)) {
-			if (capacity[nowInedex] > capacity[LeftIndex(nowInedex)]) {
-				T temp = capacity[nowInedex];
-				capacity[nowInedex] = capacity[LeftIndex(nowInedex)];
-				capacity[LeftIndex(nowInedex)] = temp;
-				nowInedex = LeftIndex(nowInedex);
+			if (capacity[nowIndex] > capacity[left]) {
+				int temp = capacity[nowIndex];
+				capacity[nowIndex] = capacity[left];
+				capacity[left] = temp;
+				nowIndex = left;
 			}
 			else {
-				break;
+				whilesw = false;
 			}
+	
 		}
 		else {
-			if (capacity[nowInedex] > capacity[RightIndex(nowInedex)]) {
-				T temp = capacity[nowInedex];
-				capacity[nowInedex] = capacity[RightIndex(nowInedex)];
-				capacity[RightIndex(nowInedex)] = temp;
-				nowInedex = RightIndex(nowInedex);
+
+			if (capacity[nowIndex] > capacity[right]) {
+				int temp = capacity[right];
+				capacity[nowIndex] = capacity[right];
+				capacity[right] = temp;
+				nowIndex = right;
 			}
 			else {
-				break;
+				whilesw = false;
 			}
 		}
-	
+
 	}
-	return tRet;
+	return *tRet;
 }
 
-
-template <typename T>
-T& Heap<T>::CheckRoot()
+int Heap::CheckRoot()
 {
+	*tRet = capacity[0];
 
-	tRet = capacity[0];
-
-	return tRet;
+	return *tRet;
 }
 
-template <typename T>
-int  Heap<T>::getCount()
+int  Heap::getCount()
 {
-	return iLastIndex;
+	return iCount;
 }
 
-template <typename T>
-int  Heap<T>::getSize()
+int  Heap::getSize()
 {
-	return Size;
+	return iSize;
 }
 
-
-template <typename T>
-Heap<T>::~Heap()
+Heap::~Heap()
 {
 
 }
