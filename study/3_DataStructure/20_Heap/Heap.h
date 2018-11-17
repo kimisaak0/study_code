@@ -110,34 +110,46 @@ int Heap::DelNode()
 		tRet = nullptr;
 	}
 
-	iCount--;
-
 
 	*tRet = capacity[0];
-	capacity[0] = capacity[iCount];
+	capacity[0] = capacity[--iCount];
 
 	int nowIndex = 0;
 	bool whilesw = true;
+
+	if (iCount == 0) {
+		*tRet = capacity[0];
+		return *tRet;
+	}
+
 
 	while (whilesw) {
 
 		int left = LeftIndex(nowIndex);
 		int right = RightIndex(nowIndex);
 
-
-		if (left == -1) {
-			left = iCount;
-			whilesw = false;
-		} 
-
-		if (right == -1) {
-			right = iCount;
-			whilesw = false;
+		if (iCount > 1) {
+			if (left == -1 || right == -1) {
+				whilesw = false;
+				break;
+			}
+		}
+		else {
+			if (*tRet > capacity[0]) {
+				capacity[1] = *tRet;
+				*tRet = capacity[0];
+				capacity[0] = capacity[1];
+				whilesw = false;
+				break;
+			}
+			else {
+				whilesw = false;
+				break;
+			}
 		}
 
-
 		if (capacity[left] < capacity[right]) {
-	
+
 			if (capacity[nowIndex] > capacity[left]) {
 				int temp = capacity[nowIndex];
 				capacity[nowIndex] = capacity[left];
@@ -145,21 +157,22 @@ int Heap::DelNode()
 				nowIndex = left;
 			}
 			else {
-				whilesw = false;
+				break;
 			}
-	
+
 		}
 		else {
 
 			if (capacity[nowIndex] > capacity[right]) {
-				int temp = capacity[right];
+				int temp = capacity[nowIndex];
 				capacity[nowIndex] = capacity[right];
 				capacity[right] = temp;
 				nowIndex = right;
 			}
 			else {
-				whilesw = false;
+				break;
 			}
+
 		}
 
 	}
