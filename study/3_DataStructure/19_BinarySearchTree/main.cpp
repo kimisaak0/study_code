@@ -18,11 +18,16 @@ int main()
 	bst.AddNode(5);
 	bst.AddNode(81);
 	bst.AddNode(51);
+	bst.AddNode(-1);
 	bst.AddNode(11);
 	bst.AddNode(1);
 	bst.AddNode(6);
 	bst.AddNode(2);
+	bst.AddNode(-3);
+
+	bst.DeleteNode(-3);
+	bst.DeleteNode(-1);
 	
-	inorder(bst.Search(21), print);
+	inorder(bst.TreePointer, print);
 
 }

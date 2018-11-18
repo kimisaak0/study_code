@@ -1,6 +1,6 @@
 #pragma once
 
-class Heap
+class PQ_Heap
 {
 	int* capacity;
 	int iSize;
@@ -15,24 +15,24 @@ private:
 	int   RightIndex(int index);  // 지정한 노드의 오른쪽 노드의 인덱스를 반환
 
 public:
-	bool   AddNode(int data);
-	int    DelNode();
-	int    CheckRoot();
+	bool   Add(int data);
+	int    Remove();
+	int    Retrive();
 
 	int  getCount();
 	int  getSize();
 
 
 public:
-	Heap(int size);
-	virtual ~Heap();
+	PQ_Heap(int size);
+	virtual ~PQ_Heap();
 };
 
 //------------------------>
 
 //private Function
 // 지정한 노드의 부모 노드의 인덱스를 반환, -1은 없음을 의미.
-int   Heap::ParentIndex(int index)
+int   PQ_Heap::ParentIndex(int index)
 {
 	if (index == 0) {
 		return -1;
@@ -42,7 +42,7 @@ int   Heap::ParentIndex(int index)
 }
 
 // 지정한 노드의 왼쪽 노드의 인덱스를 반환, -1은 없음을 의미.
-int   Heap::LeftIndex(int index)
+int   PQ_Heap::LeftIndex(int index)
 {
 	int iRet = index * 2 + 1;
 
@@ -54,7 +54,7 @@ int   Heap::LeftIndex(int index)
 }
 
 // 지정한 노드의 오른쪽 노드의 인덱스를 반환, -1은 없음을 의미.
-int   Heap::RightIndex(int index)
+int   PQ_Heap::RightIndex(int index)
 {
 	int iRet = index * 2 + 2;
 
@@ -68,7 +68,7 @@ int   Heap::RightIndex(int index)
 
 //---------------------------->
 //Public Function
-Heap::Heap(int _size)
+PQ_Heap::PQ_Heap(int _size)
 {
 	iSize = _size;
 	capacity = new int[iSize];
@@ -76,7 +76,7 @@ Heap::Heap(int _size)
 	tRet = new int;
 }
 
-bool Heap::AddNode(int data)
+bool PQ_Heap::Add(int data)
 {
 	if (iCount == iSize) {
 		return false;
@@ -103,7 +103,7 @@ bool Heap::AddNode(int data)
 	return true;
 }
 
-int Heap::DelNode()
+int PQ_Heap::Remove()
 {
 	if (iCount == 0) {
 		tRet = nullptr;
@@ -178,24 +178,24 @@ int Heap::DelNode()
 	return *tRet;
 }
 
-int Heap::CheckRoot()
+int PQ_Heap::Retrive()
 {
 	*tRet = capacity[0];
 
 	return *tRet;
 }
 
-int  Heap::getCount()
+int  PQ_Heap::getCount()
 {
 	return iCount;
 }
 
-int  Heap::getSize()
+int  PQ_Heap::getSize()
 {
 	return iSize;
 }
 
-Heap::~Heap()
+PQ_Heap::~PQ_Heap()
 {
-
+	delete tRet;
 }
