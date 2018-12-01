@@ -7,7 +7,7 @@ using std::cin;
 #include <conio.h>
 #include <time.h>
 
-#define q4
+#define q5
 
 //사용자로부터 세 개의 정수를 받은 후 if-else문을 사용하여 가장 작은 값을 반환하는 get_minimum(x1, x2, x3)함수를 작성하고 테스트하라.
 #ifdef q1
@@ -160,13 +160,16 @@ void is_winning_ticket(int a)
 
 int main()
 {
+	int a = 0;
+
 	while (true) {
-		int a = 0;
-		cout << "1~100사이의 숫자를 입력하세요 : ";
+		cout << "1~100사이의 숫자를 입력하세요 (0은 종료) : ";
 		cin >> a;
+		if (a == 0) {
+			return 0;
+		}
 		if (a >= 1 && a <= 100) {
 			is_winning_ticket(a);
-			return 0;
 		}
 	}
 }
@@ -174,6 +177,60 @@ int main()
 #endif
 
 #ifdef q5
+
+int ComsChoice()
+{
+	srand((unsigned)time(NULL));
+
+	int ri = rand() % 3 + 1;;
+
+	switch (ri)
+	{
+		case 1: { cout << "컴퓨터 : 묵" << endl; } break;
+		case 2: { cout << "컴퓨터 : 찌" << endl; } break;
+		case 3: { cout << "컴퓨터 : 빠" << endl; } break;
+	}
+
+	return ri;
+}
+
+void CheckWin(int player) {
+	int coms = ComsChoice();
+
+	if (coms == player) {
+		cout << "비겼습니다." << endl;
+	}
+	else if (coms - player == 2 || coms - player == -1) {
+		cout << "졌습니다." << endl;
+	}
+	else {
+		cout << "이겼습니다." << endl;
+	}
+}
+
+int main()
+{
+	int c;
+	while (true) {
+		cout << "선택하세요. 1. 묵, 2. 찌, 3. 빠 (0 종료)" << endl;
+		cin >> c;
+
+		if (c == 0) {
+			return 0;
+		}
+
+		if (c >= 1 && c <= 3) {
+			switch (c) {
+				case 1: { cout << "플레이어 : 묵" << endl; } break;
+				case 2: { cout << "플레이어 : 찌" << endl; } break;
+				case 3: { cout << "플레이어 : 빠" << endl; } break;
+			}
+			CheckWin(c);
+		}
+	}
+
+}
+
 #endif
 
 #ifdef q6
