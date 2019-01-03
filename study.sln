@@ -181,6 +181,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "21_PriorityQueue_bst", "stu
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "22_PriorityQueue_Heap", "study\3_DataStructure\22_PriorityQueue_Heap\22_PriorityQueue_Heap.vcxproj", "{216EDAE9-E824-433D-B7C0-71E17D2BF0BA}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "23_AdjacencyMatrixGraph", "23_AdjacencyMatrixGraph\23_AdjacencyMatrixGraph.vcxproj", "{757F2B9B-3481-44F2-9444-182DBD3CFBA5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -813,6 +815,14 @@ Global
 		{216EDAE9-E824-433D-B7C0-71E17D2BF0BA}.Release|x64.Build.0 = Release|x64
 		{216EDAE9-E824-433D-B7C0-71E17D2BF0BA}.Release|x86.ActiveCfg = Release|Win32
 		{216EDAE9-E824-433D-B7C0-71E17D2BF0BA}.Release|x86.Build.0 = Release|Win32
+		{757F2B9B-3481-44F2-9444-182DBD3CFBA5}.Debug|x64.ActiveCfg = Debug|x64
+		{757F2B9B-3481-44F2-9444-182DBD3CFBA5}.Debug|x64.Build.0 = Debug|x64
+		{757F2B9B-3481-44F2-9444-182DBD3CFBA5}.Debug|x86.ActiveCfg = Debug|Win32
+		{757F2B9B-3481-44F2-9444-182DBD3CFBA5}.Debug|x86.Build.0 = Debug|Win32
+		{757F2B9B-3481-44F2-9444-182DBD3CFBA5}.Release|x64.ActiveCfg = Release|x64
+		{757F2B9B-3481-44F2-9444-182DBD3CFBA5}.Release|x64.Build.0 = Release|x64
+		{757F2B9B-3481-44F2-9444-182DBD3CFBA5}.Release|x86.ActiveCfg = Release|Win32
+		{757F2B9B-3481-44F2-9444-182DBD3CFBA5}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -898,6 +908,7 @@ Global
 		{AFBA894D-8A8E-4B74-851D-9C7EC1D017B8} = {F95B6AF2-3E00-4CBE-A08A-C862E9FD9AE8}
 		{3207C470-E866-4E78-8BCF-E6528899725B} = {F95B6AF2-3E00-4CBE-A08A-C862E9FD9AE8}
 		{216EDAE9-E824-433D-B7C0-71E17D2BF0BA} = {F95B6AF2-3E00-4CBE-A08A-C862E9FD9AE8}
+		{757F2B9B-3481-44F2-9444-182DBD3CFBA5} = {F95B6AF2-3E00-4CBE-A08A-C862E9FD9AE8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2E4B6B40-23D2-44B1-8503-70BBEDC4E4D5}
