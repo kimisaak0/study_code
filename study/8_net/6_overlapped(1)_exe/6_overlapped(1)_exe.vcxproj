@@ -79,10 +79,10 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../../../../../z_End/Net/6lib/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../z_End/Net/6lib/</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>../../../../../z_End/Net/6lib/</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../../../z_End/Net/6lib/</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

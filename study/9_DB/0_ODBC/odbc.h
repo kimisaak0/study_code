@@ -46,9 +46,13 @@ int Init()
 
 	//연결 핸들
 	SQLAllocHandle(SQL_HANDLE_DBC, g_hEnv, &g_hDbc);
-	SQLTCHAR dsn[256] = _T("Sample_db");
+	SQLTCHAR InCon[256];
+	SQLTCHAR OutCon[1024];
+	SQLSMALLINT cbOutCon;
 
-	SQLRETURN ret = SQLConnect(g_hDbc, (SQLTCHAR*)dsn, SQL_NTS, (SQLTCHAR*)L"sa", SQL_NTS, (SQLTCHAR*)L"kgca!@34", SQL_NTS);
+	_stprintf(InCon, _T("%s"), _T("Driver={SQL Server};Server=shader.kr;Address=192.168.0.104,1433;Network=dbmssocn;Database=KGCA_SAMPLE;Uid=sa;Pwd=kgca!@34;"));
+	SQLRETURN ret = SQLDriverConnect(g_hDbc, NULL, (SQLTCHAR*)InCon, _countof(InCon), OutCon,	_countof(OutCon), &cbOutCon, SQL_DRIVER_NOPROMPT);
+
 	if (ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO) {
 		return -1;
 	}

@@ -12,7 +12,10 @@ class LinearList
 private:
 	//할당받은 메모리가 부족할 때 메모리를 더 할당받고 데이터를 그대로 복사.
 	void moveData();
+<<<<<<< HEAD
 	
+=======
+>>>>>>> origin/merge
 
 public:
 	//get method
@@ -27,6 +30,7 @@ public:
 
 	int addData(T data);                  //뒤에 데이터 추가
 	int InsertData(int index, T data);    //중간에 데이터 삽입
+<<<<<<< HEAD
 	
 	int DeleteData(int index);            //인덱스로 데이터 삭제
 	int DeleteValue(T data);              //데이터 값으로 데이터 삭제.
@@ -36,6 +40,17 @@ public:
 	T& now();
 	T& next();
 	
+=======
+
+	int DeleteData(int index);            //인덱스로 데이터 삭제
+	int DeleteValue(T data);              //데이터 값으로 데이터 삭제.
+
+    //순회용.
+	T& prev();
+	T& now();
+	T& next();
+
+>>>>>>> origin/merge
 
 public:
 	LinearList();
@@ -52,7 +67,11 @@ void LinearList<T>::moveData()
 			backup[i] = arr[i];
 		}
 		arr = new T[iSize + 5];
+<<<<<<< HEAD
 		for (int i = 0; i < iEnd-1; i++) {
+=======
+		for (int i = 0; i < iEnd - 1; i++) {
+>>>>>>> origin/merge
 			arr[i] = backup[i];
 		}
 		iSize = iSize + 5;
@@ -125,7 +144,11 @@ int LinearList<T>::InsertData(int index, T data)
 	}
 
 	arr[index] = data;
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> origin/merge
 	return iEnd;
 }
 
@@ -182,7 +205,11 @@ T& LinearList<T>::next()
 	if (nowIndex < iEnd) {
 		return arr[nowIndex++];
 	}
+<<<<<<< HEAD
 	return arr[iEnd-1];
+=======
+	return arr[iEnd - 1];
+>>>>>>> origin/merge
 }
 
 //소멸자

@@ -4,6 +4,7 @@
 
 int main()
 {
+<<<<<<< HEAD
 	{
 		LinearList<int> a;
 
@@ -18,7 +19,16 @@ int main()
 		for (int i = 0; i < a.GetEnd(); i++) {
 			std::cout << a.next() << std::endl;
 		}
+=======
+	LinearList<int> a;
+
+	for (int i = 0; i < 4; i++) {
+		a.addData(i);
+>>>>>>> origin/merge
 	}
 
+	for (int i = 0; i < a.GetEnd(); i++) {
+		std::cout << a.next() << std::endl;
+	}
 
 }

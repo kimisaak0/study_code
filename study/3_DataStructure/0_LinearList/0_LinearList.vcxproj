@@ -22,7 +22,12 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{A709B9E1-ECC7-447C-87D3-652D88C028D1}</ProjectGuid>
     <RootNamespace>My0LinearList</RootNamespace>
+<<<<<<< HEAD
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+=======
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <ProjectName>00_LinearList</ProjectName>
+>>>>>>> origin/merge
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -70,8 +75,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>../../../../../z_End/DS/0/</OutDir>
-    <IntDir>../../../../../z_Mid/DS/0/</IntDir>
+    <OutDir>../../../../z_End/DS/0/</OutDir>
+    <IntDir>../../../../z_Mid/DS/0/</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
